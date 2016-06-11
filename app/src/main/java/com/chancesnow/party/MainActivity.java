@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
     private Date mSpotifyApiTokenExpires;
 
     private View mActivityMain;
+    private View mTitle;
     private PlayerFragment player;
     private Button mLoginButton;
     private View mAttributionSpace;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
         mSpotifyApiTokenExpires = new Date();
 
         mActivityMain = findViewById(R.id.main);
+
+        mTitle = findViewById(R.id.main_title);
 
         player = (PlayerFragment) getFragmentManager().findFragmentById(R.id.main_player);
 
@@ -197,6 +200,8 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
             // Hello, %1$s! You have %2$d new messages.
             // String.format(R.string.message, foo, bar);
 
+            mTitle.setVisibility(View.INVISIBLE);
+
             mLoginButton.setVisibility(View.INVISIBLE);
 
             getFragmentManager().beginTransaction().show(player).commit();
@@ -206,6 +211,8 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
             mLogoutButton.setVisibility(View.VISIBLE);
             mAttributionSpace.setLayoutParams(ZERO_LAYOUT);
         } else {
+            mTitle.setVisibility(View.VISIBLE);
+
             mLoginButton.setVisibility(View.VISIBLE);
 
             getFragmentManager().beginTransaction().hide(player).commit();
