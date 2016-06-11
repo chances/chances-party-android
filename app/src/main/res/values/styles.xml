@@ -2,6 +2,6 @@
     <style name="PartyTheme" parent="@style/Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccentMuted</item>
+        <item name="colorAccent">@color/colorAccentLight</item>
     </style>
 </resources>

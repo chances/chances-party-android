@@ -2,10 +2,12 @@
 <resources>
     <color name="colorPrimary">#242424</color>
     <color name="colorPrimaryDark">#0A0A0A</color>
-    <color name="colorAccent">#619015</color>
-    <color name="colorAccentMuted">#FCFCFC</color>
-    <color name="colorAccentControls">#A0A0A0</color>
-    <color name="colorAccentControlsPressed">#797979</color>
+    <color name="colorAccent">#00B957</color>
+    <color name="colorAccentHighlight">#00D764</color>
+    <color name="colorAccentLight">#FCFCFC</color>
+
+    <color name="colorAccentLightControl">#A0A0A0</color>
+    <color name="colorAccentLightControlHighlight">#797979</color>
 
     <color name="statusBarColor">@color/colorPrimary</color>
 </resources>
