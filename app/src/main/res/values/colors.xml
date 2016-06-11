@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#242424</color>
+    <color name="colorPrimaryDark">#0A0A0A</color>
+    <color name="colorAccent">#619015</color>
+    <color name="colorAccentMuted">#FCFCFC</color>
+    <color name="colorAccentControls">#A0A0A0</color>
+    <color name="colorAccentControlsPressed">#797979</color>
+
+    <color name="statusBarColor">@color/colorPrimary</color>
+</resources>
