@@ -7,20 +7,30 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:background="@drawable/list_item">
 
+    <ImageView
+        android:id="@+id/playlist.icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="@dimen/list_icon_margin"
+        android:layout_marginBottom="@dimen/list_icon_margin"
+        android:contentDescription="@string/playlist_icon" />
+
     <TextView
         android:id="@+id/playlist.name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
+        android:layout_gravity="center_vertical"
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <TextView
         android:id="@+id/playlist.trackCount"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="@dimen/text_margin"
         android:layout_weight="1"
+        android:gravity="center_vertical|end"
         android:textColor="@color/colorAccentLightControl"
         android:textAppearance="?attr/textAppearanceListItemSmall"
-        android:textAlignment="viewEnd" />
+        android:textAlignment="gravity" />
 </LinearLayout>
