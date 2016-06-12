@@ -1,8 +1,11 @@
 package com.chancesnow.party;
 
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -354,7 +357,9 @@ public class MainActivity extends AppCompatActivity
     public void onPlaylistsLoaded() {
         //getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
         getFragmentManager().beginTransaction().hide(mLoadingFragment).commit();
-        getFragmentManager().beginTransaction().show(mPlaylistsFragment).commit();
+        getFragmentManager().beginTransaction()
+                .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
+                .show(mPlaylistsFragment).commit();
 
         mToolbar.setVisibility(View.VISIBLE);
         mToolbar.setTitle(R.string.select_playlist);
@@ -362,6 +367,18 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPlaylistSelected(PlaylistSimple item) {
+        getFragmentManager().beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .hide(mPlaylistsFragment).commit();
 
+        mToolbar.setTitle(R.string.queue);
+
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                // TODO: Setup queue stuff?
+            }
+        }, 400);
     }
 }

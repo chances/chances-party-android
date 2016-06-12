@@ -15,4 +15,6 @@
     <string name="select_playlist">Your Playlists</string>
     <string name="playlist_icon">Playlist Icon</string>
     <string name="track_count">%1$s songs</string>
+
+    <string name="queue">Queue</string>
 </resources>
