@@ -294,8 +294,6 @@ public class MainActivity extends AppCompatActivity
     private void loadPlaylists() {
         getFragmentManager().beginTransaction().show(mLoadingFragment).commit();
 
-        mLoadingFragment.setLoadingTopic("party shit");
-
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
