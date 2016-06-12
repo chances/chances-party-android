@@ -8,8 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Calendar;
-import java.util.Date;
+import com.chancesnow.party.spotify.SpotifyClient;
 
 
 /**
@@ -21,12 +20,7 @@ import java.util.Date;
  * create an instance of this fragment.
  */
 public class PlayerFragment extends Fragment {
-    private static final String ARG_TOKEN = "mSpotifyApiToken";
-    private static final String ARG_TOKEN_EXPIRES = "mSpotifyApiTokenExpires";
-
-    private String mSpotifyApiToken;
-    private Calendar mDateCalendar;
-    private Date mSpotifyApiTokenExpires;
+    private SpotifyClient mSpotifyClient;
 
     private OnPlayerInteractionListener mListener;
 
@@ -41,24 +35,7 @@ public class PlayerFragment extends Fragment {
      * @return A new instance of fragment PlayerFragment.
      */
     public static PlayerFragment newInstance(String token, long expires) {
-        PlayerFragment fragment = new PlayerFragment();
-        Bundle args = new Bundle();
-
-        args.putString(ARG_TOKEN, token);
-        args.putLong(ARG_TOKEN_EXPIRES, expires);
-
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mSpotifyApiToken = getArguments().getString(ARG_TOKEN);
-            mSpotifyApiTokenExpires = new Date(getArguments().getLong(ARG_TOKEN_EXPIRES));
-        }
+        return new PlayerFragment();
     }
 
     @Override
@@ -92,8 +69,8 @@ public class PlayerFragment extends Fragment {
         mListener = null;
     }
 
-    public void setSpotifyApiToken(String token) {
-        this.mSpotifyApiToken = token;
+    public void setSpotifyClient(SpotifyClient spotifyClient) {
+        this.mSpotifyClient = spotifyClient;
     }
 
     /**
