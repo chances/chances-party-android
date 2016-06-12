@@ -10,5 +10,6 @@
     <dimen name="button_height">36dp</dimen>
     <dimen name="button_margin">54dp</dimen>
     <dimen name="button_padding">36dp</dimen>
+    <dimen name="button_with_icon_padding_right">40dp</dimen>
     <dimen name="button_radius">36dip</dimen>
 </resources>

@@ -98,6 +98,15 @@ public class MainActivity extends AppCompatActivity
 
         mLoginButton = (Button) findViewById(R.id.main_login);
 
+        Button shuffle = (Button) findViewById(R.id.player_shuffle);
+        if (shuffle != null)
+            shuffle.setCompoundDrawablesRelative(
+                    new IconDrawable(this, MaterialCommunityIcons.mdi_play)
+                            .colorRes(R.color.colorAccentLight)
+                            .sizeDp(32),
+                    null, null, null
+            );
+
         // Restore previous state if available
         if (savedInstanceState != null) {
             String token = savedInstanceState.getString(STATE_TOKEN);

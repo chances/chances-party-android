@@ -18,4 +18,5 @@
     <string name="track_count">%1$s songs</string>
 
     <string name="queue">Queue</string>
+    <string name="shuffle_play">Shuffle Play</string>
 </resources>
