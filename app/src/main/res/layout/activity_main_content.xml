@@ -39,66 +39,70 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="52dp">
+        android:layout_height="match_parent">
 
-        <fragment
-            android:id="@+id/main.playlists"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:name="com.chancesnow.party.PlaylistFragment"
-            tools:layout="@layout/fragment_playlist_list" />
+            android:layout_marginBottom="@dimen/activity_vertical_margin">
 
-        <fragment
-            android:id="@+id/main.player"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:name="com.chancesnow.party.PlayerFragment"
-            tools:layout="@layout/fragment_player" />
-    </LinearLayout>
+            <fragment
+                android:id="@+id/main.playlists"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:name="com.chancesnow.party.PlaylistFragment"
+                tools:layout="@layout/fragment_playlist_list" />
 
-    <LinearLayout
-        android:id="@+id/main.footer"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" >
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <LinearLayout
-            android:id="@+id/main.attribution"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="bottom" >
-
-            <TextView
-                android:id="@+id/main.poweredBy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/text_margin"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/poweredBy"
-                android:layout_gravity="center_vertical" />
-
-            <ImageView
-                android:id="@+id/main.spotifyLogo"
-                android:layout_width="110dp"
-                android:layout_height="37dp"
-                android:contentDescription="@string/spotify"
-                android:src="@drawable/spotify_logo_white" />
+            <fragment
+                android:id="@+id/main.player"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:name="com.chancesnow.party.PlayerFragment"
+                tools:layout="@layout/fragment_player" />
         </LinearLayout>
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+        <LinearLayout
+            android:id="@+id/main.footer"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:id="@+id/main.attribution"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="bottom" >
+
+                <TextView
+                    android:id="@+id/main.poweredBy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/text_margin"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/poweredBy"
+                    android:layout_gravity="center_vertical" />
+
+                <ImageView
+                    android:id="@+id/main.spotifyLogo"
+                    android:layout_width="110dp"
+                    android:layout_height="37dp"
+                    android:contentDescription="@string/spotify"
+                    android:src="@drawable/spotify_logo_white" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
