@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
 
     private View mActivityMain;
 
+    private PlaylistFragment mPlaylistsFragment;
     private PlayerFragment mPlayerFragment;
     private LoadingFragment mLoadingFragment;
 
@@ -65,14 +66,15 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
 
         mTitle = findViewById(R.id.main_title);
 
+        mPlaylistsFragment = (PlaylistFragment) getFragmentManager().findFragmentById(R.id.main_playlists);
         mPlayerFragment = (PlayerFragment) getFragmentManager().findFragmentById(R.id.main_player);
         mLoadingFragment = (LoadingFragment) getFragmentManager().findFragmentById(R.id.main_loading);
 
         getFragmentManager().beginTransaction().hide(mLoadingFragment).commit();
 
+        getFragmentManager().beginTransaction().hide(mPlaylistsFragment).commit();
         getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
 
-//        mPlayerFragment.setArguments(savedInstanceState);
 //        getFragmentManager().beginTransaction().add(R.id.main_player, mPlayerFragment).commit();
 
         mLoginButton = (Button) findViewById(R.id.main_login);

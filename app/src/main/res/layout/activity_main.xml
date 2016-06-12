@@ -45,12 +45,20 @@
         android:layout_marginBottom="50dp">
 
         <fragment
+            android:id="@+id/main.playlists"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:name="com.chancesnow.party.PlaylistFragment"
+            tools:layout="@layout/fragment_playlist_list" />
+
+        <fragment
             android:id="@+id/main.player"
             android:layout_width="match_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:name="com.chancesnow.party.PlayerFragment"
-            tools:layout="@layout/fragment_player"
-            android:layout_height="0dp" />
+            tools:layout="@layout/fragment_player" />
     </LinearLayout>
 
     <LinearLayout
