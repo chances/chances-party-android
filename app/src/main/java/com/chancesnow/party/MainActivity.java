@@ -19,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.Button;
 
 import com.chancesnow.party.spotify.SpotifyClient;
+import com.joanzapata.iconify.IconDrawable;
+import com.joanzapata.iconify.fonts.MaterialCommunityIcons;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity
     private View mActivityMain;
 
     private Toolbar mToolbar;
+    private Menu mToolbarMenu;
+    private MenuItem mNowPlayingMenuItem;
 
     private PlaylistFragment mPlaylistsFragment;
     private PlayerFragment mPlayerFragment;
@@ -195,6 +199,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        mToolbarMenu = menu;
+
+        mNowPlayingMenuItem = menu.findItem(R.id.action_now_playing).setIcon(
+                new IconDrawable(this, MaterialCommunityIcons.mdi_playlist_play)
+                        .colorRes(R.color.colorAccentLight)
+                        .actionBarSize())
+                .setVisible(true);
 
         return true;
     }
