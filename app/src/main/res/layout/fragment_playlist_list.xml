@@ -1,27 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:id="@+id/playlist.list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="@dimen/text_margin"
     android:layout_marginRight="@dimen/text_margin"
+    android:scrollbars="vertical"
+    app:layoutManager="LinearLayoutManager"
+    tools:listitem="@layout/fragment_playlist"
     android:name="com.chancesnow.party.PlaylistFragment"
-    tools:context="com.chancesnow.party.PlaylistFragment" >
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/TextAppearance.AppCompat.Subhead"
-        android:text="@string/select_playlist" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/playlist.list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbars="vertical"
-        app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/fragment_playlist" />
-</LinearLayout>
+    tools:context="com.chancesnow.party.PlaylistFragment" />
