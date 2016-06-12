@@ -355,7 +355,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPlaylistsLoaded() {
-        //getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
         getFragmentManager().beginTransaction().hide(mLoadingFragment).commit();
         getFragmentManager().beginTransaction()
                 .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
@@ -368,7 +367,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPlaylistSelected(PlaylistSimple item) {
         getFragmentManager().beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
                 .hide(mPlaylistsFragment).commit();
 
         mToolbar.setTitle(R.string.queue);
@@ -376,6 +375,9 @@ public class MainActivity extends AppCompatActivity
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
+                getFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
+                        .show(mPlayerFragment).commit();
 
                 // TODO: Setup queue stuff?
             }
