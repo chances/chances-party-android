@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
 
     private View mActivityMain;
     private View mTitle;
-    private PlayerFragment player;
+    private PlayerFragment mPlayerFragment;
     private Button mLoginButton;
     private View mAttributionSpace;
     private Button mLogoutButton;
@@ -62,12 +62,12 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
 
         mTitle = findViewById(R.id.main_title);
 
-        player = (PlayerFragment) getFragmentManager().findFragmentById(R.id.main_player);
+        mPlayerFragment = (PlayerFragment) getFragmentManager().findFragmentById(R.id.main_player);
 
-        getFragmentManager().beginTransaction().hide(player).commit();
+        getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
 
-//        player.setArguments(savedInstanceState);
-//        getFragmentManager().beginTransaction().add(R.id.main_player, player).commit();
+//        mPlayerFragment.setArguments(savedInstanceState);
+//        getFragmentManager().beginTransaction().add(R.id.main_player, mPlayerFragment).commit();
 
         mLoginButton = (Button) findViewById(R.id.main_login);
 
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
                 mSpotifyApiToken = token;
                 mSpotifyApiTokenExpires = new Date(expires);
 
-                player.setSpotifyApiToken(token);
+                mPlayerFragment.setSpotifyApiToken(token);
 
                 setLoginState(true);
             } else {
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
 
             mLoginButton.setVisibility(View.INVISIBLE);
 
-            getFragmentManager().beginTransaction().show(player).commit();
+            getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
 
             // Show the logout button
             mLogoutButton.setLayoutParams(WRAP_CONTENT_LAYOUT);
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
 
             mLoginButton.setVisibility(View.VISIBLE);
 
-            getFragmentManager().beginTransaction().hide(player).commit();
+            getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
 
             // Hide the logout button
             mLogoutButton.setLayoutParams(ZERO_LAYOUT);
