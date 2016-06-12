@@ -6,6 +6,8 @@
     <color name="colorAccentHighlight">#00D764</color>
     <color name="colorAccentLight">#FCFCFC</color>
 
+    <color name="colorAccentControlHighlight">#292929</color>
+
     <color name="colorAccentLightControl">#A0A0A0</color>
     <color name="colorAccentLightControlHighlight">#797979</color>
 
