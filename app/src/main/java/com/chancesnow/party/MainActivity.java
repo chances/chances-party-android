@@ -389,6 +389,7 @@ public class MainActivity extends AppCompatActivity
                 .hide(mPlaylistsFragment).commit();
 
         mToolbar.setTitle(R.string.queue);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
