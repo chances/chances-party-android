@@ -3,10 +3,8 @@ package com.chancesnow.party;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +26,11 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
  */
 public class PlaylistFragment extends Fragment {
 
+    private static final String STATE_PLAYLISTS = "userPlaylists";
+
+    private boolean restoredFromState;
+    private Pager<PlaylistSimple> mPlaylists;
+
     private RecyclerView mRecyclerView;
 
     private OnPlaylistListListener mListener;
@@ -44,16 +47,37 @@ public class PlaylistFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_playlist_list, container, false);
 
+        restoredFromState = false;
+        mPlaylists = null;
+
         // Set the adapter
-//        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_list);
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-            mRecyclerView.setAdapter(new PlaylistViewAdapter(new ArrayList<PlaylistSimple>(), mListener));
-//        }
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_list);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        mRecyclerView.setAdapter(new PlaylistViewAdapter(new ArrayList<PlaylistSimple>(), mListener));
+
+        // Restore previous state if available
+        if (savedInstanceState != null) {
+            Pager<PlaylistSimple> playlists = savedInstanceState.getParcelable(STATE_PLAYLISTS);
+            if (playlists != null) {
+                mPlaylists = playlists;
+
+                addPlaylists(playlists.items);
+
+                restoredFromState = true;
+            }
+        }
+
         return view;
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (restoredFromState && mListener != null)
+            mListener.onPlaylistsLoaded();
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -72,6 +96,15 @@ public class PlaylistFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        if (mPlaylists != null) {
+            savedInstanceState.putParcelable(STATE_PLAYLISTS, mPlaylists);
+        }
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
     public void loadPlaylists(SpotifyClient spotifyClient) {
         spotifyClient.getOwnPlaylists(new SpotifyClient.OwnPlaylistsCallback() {
             @Override
@@ -85,6 +118,7 @@ public class PlaylistFragment extends Fragment {
                 if (mListener != null)
                     mListener.onPlaylistsLoaded();
 
+                mPlaylists = playlists;
                 addPlaylists(playlists.items);
 
                 // TODO: Handle paging?

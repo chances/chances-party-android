@@ -100,10 +100,6 @@ public class MainActivity extends AppCompatActivity
             String token = savedInstanceState.getString(STATE_TOKEN);
 
             updateToken(token, savedInstanceState.getLong(STATE_TOKEN_EXPIRES));
-
-            loadPlaylists();
-
-            // TODO: Restore playlists from instance Bundle
         } else {
             // Restore persisted state if available
             SharedPreferences state = getSharedPreferences(PREFS_GENERAL, 0);
@@ -135,8 +131,6 @@ public class MainActivity extends AppCompatActivity
             // Persist expired state
             savedInstanceState.putString(STATE_TOKEN, TOKEN_EXPIRED);
         }
-
-        // TODO: Persist playlists to parcel in Bundle
 
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -298,16 +292,22 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void loadPlaylists() {
-        if (mSpotifyApiTokenExpires.after(new Date())) {
-            getFragmentManager().beginTransaction().show(mLoadingFragment).commit();
+        getFragmentManager().beginTransaction().show(mLoadingFragment).commit();
 
-            mLoadingFragment.setLoadingTopic("party shit");
+        mLoadingFragment.setLoadingTopic("party shit");
 
-            // TODO: Start a session with the Party API
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mSpotifyApiTokenExpires.after(new Date())) {
 
-            mPlaylistsFragment.loadPlaylists(mSpotify);
-        } else
-            expireTokenAndLogout();
+                    // TODO: Start a session with the Party API
+
+                    mPlaylistsFragment.loadPlaylists(mSpotify);
+                } else
+                    expireTokenAndLogout();
+            }
+        }, 250);
     }
 
     public void login(View view) {
