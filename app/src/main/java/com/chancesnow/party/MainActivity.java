@@ -1,6 +1,5 @@
 package com.chancesnow.party;
 
-import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
