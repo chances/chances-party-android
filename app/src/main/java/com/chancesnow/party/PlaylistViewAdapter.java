@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.chancesnow.party.PlaylistFragment.OnPlaylistListListener;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
@@ -18,6 +19,8 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
  * TODO: Replace the implementation with code for your data type.
  */
 public class PlaylistViewAdapter extends RecyclerView.Adapter<PlaylistViewAdapter.ViewHolder> {
+
+    private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
     private final List<PlaylistSimple> mValues;
     private final PlaylistFragment.OnPlaylistListListener mListener;
@@ -38,6 +41,11 @@ public class PlaylistViewAdapter extends RecyclerView.Adapter<PlaylistViewAdapte
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mNameLabel.setText(mValues.get(position).name);
+        holder.mTrackCountLabel.setText(
+                holder.mView.getContext().getString(
+                        R.string.trackCount,
+                        numberFormat.format(mValues.get(position).tracks.total)
+                ));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,12 +71,14 @@ public class PlaylistViewAdapter extends RecyclerView.Adapter<PlaylistViewAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mNameLabel;
+        public final TextView mTrackCountLabel;
         public PlaylistSimple mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mNameLabel = (TextView) view.findViewById(R.id.playlist_name);
+            mTrackCountLabel = (TextView) view.findViewById(R.id.playlist_trackCount);
         }
 
         @Override
