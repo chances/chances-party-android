@@ -43,7 +43,7 @@ public class PlaylistViewAdapter extends RecyclerView.Adapter<PlaylistViewAdapte
         holder.mNameLabel.setText(mValues.get(position).name);
         holder.mTrackCountLabel.setText(
                 holder.mView.getContext().getString(
-                        R.string.trackCount,
+                        R.string.track_count,
                         numberFormat.format(mValues.get(position).tracks.total)
                 ));
 
