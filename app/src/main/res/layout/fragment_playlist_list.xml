@@ -16,16 +16,12 @@
         style="@style/TextAppearance.AppCompat.Subhead"
         android:text="@string/select_playlist" />
 
-    <ScrollView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/playlist.list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" >
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/playlist.list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layoutManager="LinearLayoutManager"
-            tools:listitem="@layout/fragment_playlist" />
-    </ScrollView>
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/fragment_playlist" />
 </LinearLayout>
