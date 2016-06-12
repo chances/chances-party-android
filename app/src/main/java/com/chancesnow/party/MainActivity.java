@@ -7,7 +7,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Button;
@@ -49,14 +52,14 @@ public class MainActivity extends AppCompatActivity
 
     private View mActivityMain;
 
+    private Toolbar mToolbar;
+
     private PlaylistFragment mPlaylistsFragment;
     private PlayerFragment mPlayerFragment;
     private LoadingFragment mLoadingFragment;
 
     private View mTitle;
     private Button mLoginButton;
-    private View mAttributionSpace;
-    private Button mLogoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,9 @@ public class MainActivity extends AppCompatActivity
         mSpotifyApiTokenExpires = new Date();
 
         mActivityMain = findViewById(R.id.main);
+
+        mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        setSupportActionBar(mToolbar);
 
         mTitle = findViewById(R.id.main_title);
 
@@ -85,9 +91,6 @@ public class MainActivity extends AppCompatActivity
 //        getFragmentManager().beginTransaction().add(R.id.main_player, mPlayerFragment).commit();
 
         mLoginButton = (Button) findViewById(R.id.main_login);
-
-        mAttributionSpace = findViewById(R.id.main_attributionSpace);
-        mLogoutButton = (Button) findViewById(R.id.main_logout);
 
         // Restore previous state if available
         if (savedInstanceState != null) {
@@ -192,6 +195,36 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_logout) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Logout")
+                    .setMessage("Are you sure you want to logout?")
+                    .setPositiveButton(getString(R.string.logout), new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            expireTokenAndLogout();
+                        }
+
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void updateToken(String token, long expires) {
         if (token != null) {
             // If the token isn't expired, restore login state
@@ -237,6 +270,8 @@ public class MainActivity extends AppCompatActivity
         mSpotifyApiToken = TOKEN_EXPIRED;
         mSpotifyApiTokenExpires = new Date();
 
+        saveToken();
+
         setLoginState(false);
     }
 
@@ -246,11 +281,6 @@ public class MainActivity extends AppCompatActivity
             mTitle.setVisibility(View.INVISIBLE);
 
             mLoginButton.setVisibility(View.INVISIBLE);
-
-            // Show the logout button
-            mLogoutButton.setLayoutParams(WRAP_CONTENT_LAYOUT);
-            mLogoutButton.setVisibility(View.VISIBLE);
-            mAttributionSpace.setLayoutParams(ZERO_LAYOUT);
         } else {
             mTitle.setVisibility(View.VISIBLE);
 
@@ -258,11 +288,9 @@ public class MainActivity extends AppCompatActivity
 
             getFragmentManager().beginTransaction().hide(mLoadingFragment).commit();
             getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
+            getFragmentManager().beginTransaction().hide(mPlaylistsFragment).commit();
 
-            // Hide the logout button
-            mLogoutButton.setLayoutParams(ZERO_LAYOUT);
-            mLogoutButton.setVisibility(View.INVISIBLE);
-            mAttributionSpace.setLayoutParams(FLEX_LAYOUT);
+            mToolbar.setVisibility(View.GONE);
         }
     }
 
@@ -299,23 +327,6 @@ public class MainActivity extends AppCompatActivity
         AuthenticationClient.openLoginActivity(this, SPOTIFY_AUTH_REQUEST_CODE, request);
     }
 
-    public void logout(View view) {
-
-        new AlertDialog.Builder(this)
-                .setTitle("Logout from Spotify")
-                .setMessage("Are you sure you want to logout?")
-                .setPositiveButton(getString(R.string.logout), new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        expireTokenAndLogout();
-                    }
-
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
-
     @Override
     public boolean onRequestIsTokenExpired() {
         Date now = new Date();
@@ -344,6 +355,9 @@ public class MainActivity extends AppCompatActivity
         //getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
         getFragmentManager().beginTransaction().hide(mLoadingFragment).commit();
         getFragmentManager().beginTransaction().show(mPlaylistsFragment).commit();
+
+        mToolbar.setVisibility(View.VISIBLE);
+        mToolbar.setTitle(R.string.select_playlist);
     }
 
     @Override

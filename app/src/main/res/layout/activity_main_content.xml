@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/main_gradient">
+
+    <TextView
+        android:id="@+id/main.title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
+        android:text="@string/app_name" />
+
+    <Button
+        android:id="@+id/main.login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/button_padding"
+        android:paddingEnd="@dimen/button_padding"
+        android:layout_centerInParent="true"
+        android:background="@drawable/accent_button"
+        android:text="@string/login"
+        android:onClick="login" />
+
+    <fragment
+        android:id="@+id/main.loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:name="com.chancesnow.party.LoadingFragment"
+        tools:layout="@layout/fragment_loading" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="52dp">
+
+        <fragment
+            android:id="@+id/main.playlists"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:name="com.chancesnow.party.PlaylistFragment"
+            tools:layout="@layout/fragment_playlist_list" />
+
+        <fragment
+            android:id="@+id/main.player"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:name="com.chancesnow.party.PlayerFragment"
+            tools:layout="@layout/fragment_player" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/main.footer"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" >
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/main.attribution"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="bottom" >
+
+            <TextView
+                android:id="@+id/main.poweredBy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/poweredBy"
+                android:layout_gravity="center_vertical" />
+
+            <ImageView
+                android:id="@+id/main.spotifyLogo"
+                android:layout_width="110dp"
+                android:layout_height="37dp"
+                android:contentDescription="@string/spotify"
+                android:src="@drawable/spotify_logo_white" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+</RelativeLayout>
