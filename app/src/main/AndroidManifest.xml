@@ -6,7 +6,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher_party"
+        android:icon="@drawable/ic_launcher_poppers"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/PartyTheme"
