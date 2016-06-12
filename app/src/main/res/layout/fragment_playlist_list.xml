@@ -5,8 +5,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp" >
+    android:layout_marginLeft="@dimen/text_margin"
+    android:layout_marginRight="@dimen/text_margin"
+    android:name="com.chancesnow.party.PlaylistFragment"
+    tools:context="com.chancesnow.party.PlaylistFragment" >
 
     <TextView
         android:layout_width="match_parent"
@@ -21,11 +23,9 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/playlist.list"
-            android:name="com.chancesnow.party.PlaylistFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layoutManager="LinearLayoutManager"
-            tools:context="com.chancesnow.party.PlaylistFragment"
             tools:listitem="@layout/fragment_playlist" />
     </ScrollView>
 </LinearLayout>

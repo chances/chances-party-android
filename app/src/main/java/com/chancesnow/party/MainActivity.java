@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Button;
 
+import com.chancesnow.party.spotify.SpotifyClient;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -19,7 +20,11 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import java.util.Calendar;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements PlayerFragment.OnPlayerInteractionListener {
+import kaaes.spotify.webapi.android.SpotifyError;
+import kaaes.spotify.webapi.android.models.PlaylistSimple;
+
+public class MainActivity extends AppCompatActivity
+        implements PlaylistFragment.OnPlaylistListListener, PlayerFragment.OnPlayerInteractionListener {
 
     private static final int SPOTIFY_AUTH_REQUEST_CODE = 2977; // Tel keys: C-X-S-S
     private static final String CLIENT_ID = "658e37b135ea40bcabd7b3c61c8070f6";
@@ -39,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
     private String mSpotifyApiToken;
     private Calendar mDateCalendar;
     private Date mSpotifyApiTokenExpires;
+
+    private SpotifyClient mSpotify;
 
     private View mActivityMain;
 
@@ -87,17 +94,19 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
             String token = savedInstanceState.getString(STATE_TOKEN);
 
             updateToken(token, savedInstanceState.getLong(STATE_TOKEN_EXPIRES));
+
+            loadPlaylists();
+
+            // TODO: Restore playlists from instance Bundle
         } else {
             // Restore persisted state if available
             SharedPreferences state = getSharedPreferences(PREFS_GENERAL, 0);
             String token = state.getString(STATE_TOKEN, null);
             if (token != null) {
                 updateToken(token, state.getLong(STATE_TOKEN_EXPIRES, mDateCalendar.getTimeInMillis()));
-            }
-        }
 
-        if (!onRequestIsTokenExpired()) {
-            loadPlaylists();
+                loadPlaylists();
+            }
         }
     }
 
@@ -105,19 +114,7 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
     protected void onStop() {
         super.onStop();
 
-        SharedPreferences state = getSharedPreferences(PREFS_GENERAL, 0);
-        SharedPreferences.Editor stateEditor = state.edit();
-
-        mDateCalendar.setTime(mSpotifyApiTokenExpires);
-        if (mSpotifyApiTokenExpires.after(new Date())) {
-            stateEditor.putString(STATE_TOKEN, mSpotifyApiToken);
-            stateEditor.putLong(STATE_TOKEN_EXPIRES, mDateCalendar.getTimeInMillis());
-        } else {
-            // Persist expired state
-            stateEditor.putString(STATE_TOKEN, TOKEN_EXPIRED);
-        }
-
-        stateEditor.commit();
+        saveToken();
     }
 
     @Override
@@ -132,6 +129,8 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
             // Persist expired state
             savedInstanceState.putString(STATE_TOKEN, TOKEN_EXPIRED);
         }
+
+        // TODO: Persist playlists to parcel in Bundle
 
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -151,6 +150,8 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
                     updateToken(response.getAccessToken(),
                             now.getTime() + (response.getExpiresIn() * 1000)
                     );
+
+                    saveToken();
 
                     loadPlaylists();
 
@@ -198,7 +199,14 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
                 mSpotifyApiToken = token;
                 mSpotifyApiTokenExpires = new Date(expires);
 
-                mPlayerFragment.setSpotifyApiToken(token);
+                // Update Spotify Web API Client
+                if (mSpotify == null) {
+                    mSpotify = SpotifyClient.getInstance(mSpotifyApiToken);
+                } else {
+                    mSpotify.refreshToken(mSpotifyApiToken);
+                }
+
+                mPlayerFragment.setSpotifyClient(mSpotify);
 
                 setLoginState(true);
             } else {
@@ -209,12 +217,31 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
         }
     }
 
+    private void saveToken() {
+        SharedPreferences state = getSharedPreferences(PREFS_GENERAL, 0);
+        SharedPreferences.Editor stateEditor = state.edit();
+
+        mDateCalendar.setTime(mSpotifyApiTokenExpires);
+        if (mSpotifyApiTokenExpires.after(new Date())) {
+            stateEditor.putString(STATE_TOKEN, mSpotifyApiToken);
+            stateEditor.putLong(STATE_TOKEN_EXPIRES, mDateCalendar.getTimeInMillis());
+        } else {
+            // Persist expired state
+            stateEditor.putString(STATE_TOKEN, TOKEN_EXPIRED);
+        }
+
+        stateEditor.apply();
+    }
+
+    private void expireTokenAndLogout() {
+        mSpotifyApiToken = TOKEN_EXPIRED;
+        mSpotifyApiTokenExpires = new Date();
+
+        setLoginState(false);
+    }
+
     private void setLoginState(boolean isLoggedIn) {
         if (isLoggedIn) {
-
-            //DateFormat dateFormat = DateFormat.getTimeInstance();
-            // Hello, %1$s! You have %2$d new messages.
-            // String.format(R.string.message, foo, bar);
 
             mTitle.setVisibility(View.INVISIBLE);
 
@@ -240,13 +267,16 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
     }
 
     private void loadPlaylists() {
-        getFragmentManager().beginTransaction().show(mLoadingFragment).commit();
+        if (mSpotifyApiTokenExpires.after(new Date())) {
+            getFragmentManager().beginTransaction().show(mLoadingFragment).commit();
 
-        mLoadingFragment.setLoadingTopic("party shit");
+            mLoadingFragment.setLoadingTopic("party shit");
 
-        // TODO: Start a session with the Party API
+            // TODO: Start a session with the Party API
 
-        //getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
+            mPlaylistsFragment.loadPlaylists(mSpotify);
+        } else
+            expireTokenAndLogout();
     }
 
     public void login(View view) {
@@ -259,7 +289,11 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
         AuthenticationRequest.Builder builder =
                 new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 
-        builder.setScopes(new String[]{"user-read-private", "streaming"});
+        builder.setScopes(new String[]{
+                "user-read-private",
+                "playlist-read-private",
+                "streaming"
+        });
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, SPOTIFY_AUTH_REQUEST_CODE, request);
@@ -274,10 +308,7 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mSpotifyApiToken = TOKEN_EXPIRED;
-                        mSpotifyApiTokenExpires = new Date();
-
-                        setLoginState(false);
+                        expireTokenAndLogout();
                     }
 
                 })
@@ -291,5 +322,32 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
 
         return mSpotifyApiToken.equalsIgnoreCase(TOKEN_EXPIRED) ||
                 mSpotifyApiTokenExpires.before(now) || mSpotifyApiTokenExpires.equals(now);
+    }
+
+    @Override
+    public void onPlaylistLoadError(SpotifyError spotifyError) {
+        // The access token has expired
+        if (spotifyError.getRetrofitError().getResponse().getStatus() == 401 &&
+                spotifyError.getErrorDetails().message.contains("token expired")) {
+            expireTokenAndLogout();
+            return;
+        }
+
+        Log.d("d", spotifyError.toString());
+        Snackbar
+                .make(mActivityMain, spotifyError.getErrorDetails().message, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    @Override
+    public void onPlaylistsLoaded() {
+        //getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
+        getFragmentManager().beginTransaction().hide(mLoadingFragment).commit();
+        getFragmentManager().beginTransaction().show(mPlaylistsFragment).commit();
+    }
+
+    @Override
+    public void onPlaylistSelected(PlaylistSimple item) {
+
     }
 }

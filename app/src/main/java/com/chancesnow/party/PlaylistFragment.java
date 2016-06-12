@@ -3,15 +3,22 @@ package com.chancesnow.party;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.chancesnow.party.dummy.DummyContent;
-import com.chancesnow.party.dummy.DummyContent.DummyItem;
+import com.chancesnow.party.spotify.SpotifyClient;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import kaaes.spotify.webapi.android.SpotifyError;
+import kaaes.spotify.webapi.android.models.Pager;
+import kaaes.spotify.webapi.android.models.PlaylistSimple;
 
 /**
  * A fragment representing a list of Spotify playlists.
@@ -20,6 +27,8 @@ import com.chancesnow.party.dummy.DummyContent.DummyItem;
  * interface.
  */
 public class PlaylistFragment extends Fragment {
+
+    private RecyclerView mRecyclerView;
 
     private OnPlaylistListListener mListener;
 
@@ -36,17 +45,12 @@ public class PlaylistFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_playlist_list, container, false);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
+//        if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            int mColumnCount = 1;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new PlaylistViewAdapter(DummyContent.ITEMS, mListener));
-        }
+            mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_list);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            mRecyclerView.setAdapter(new PlaylistViewAdapter(new ArrayList<PlaylistSimple>(), mListener));
+//        }
         return view;
     }
 
@@ -68,6 +72,49 @@ public class PlaylistFragment extends Fragment {
         mListener = null;
     }
 
+    public void loadPlaylists(SpotifyClient spotifyClient) {
+        spotifyClient.getOwnPlaylists(new SpotifyClient.OwnPlaylistsCallback() {
+            @Override
+            public void failure(SpotifyError spotifyError) {
+                if (mListener != null)
+                    mListener.onPlaylistLoadError(spotifyError);
+            }
+
+            @Override
+            public void success(Pager<PlaylistSimple> playlists) {
+                if (mListener != null)
+                    mListener.onPlaylistsLoaded();
+
+                addPlaylists(playlists.items);
+
+                // TODO: Handle paging?
+            }
+        });
+    }
+
+    private void clearList() {
+        PlaylistViewAdapter adapter = (PlaylistViewAdapter) mRecyclerView.getAdapter();
+        int count = adapter.getItemCount();
+        adapter.getPlaylists().clear();
+
+        adapter.notifyItemRangeRemoved(0, count);
+    }
+
+    private void addPlaylist(PlaylistSimple playlist) {
+        PlaylistViewAdapter adapter = (PlaylistViewAdapter) mRecyclerView.getAdapter();
+        adapter.getPlaylists().add(playlist);
+
+        adapter.notifyItemInserted(adapter.getItemCount() - 1);
+    }
+
+    private void addPlaylists(List<PlaylistSimple> playlists) {
+        PlaylistViewAdapter adapter = (PlaylistViewAdapter) mRecyclerView.getAdapter();
+        int count = adapter.getItemCount();
+        adapter.getPlaylists().addAll(playlists);
+
+        adapter.notifyItemRangeInserted(count - 1, playlists.size());
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -79,7 +126,8 @@ public class PlaylistFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnPlaylistListListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onPlaylistLoadError(SpotifyError spotifyError);
+        void onPlaylistsLoaded();
+        void onPlaylistSelected(PlaylistSimple item);
     }
 }
