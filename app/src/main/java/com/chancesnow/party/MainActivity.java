@@ -41,8 +41,11 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
     private Date mSpotifyApiTokenExpires;
 
     private View mActivityMain;
-    private View mTitle;
+
     private PlayerFragment mPlayerFragment;
+    private LoadingFragment mLoadingFragment;
+
+    private View mTitle;
     private Button mLoginButton;
     private View mAttributionSpace;
     private Button mLogoutButton;
@@ -63,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
         mTitle = findViewById(R.id.main_title);
 
         mPlayerFragment = (PlayerFragment) getFragmentManager().findFragmentById(R.id.main_player);
+        mLoadingFragment = (LoadingFragment) getFragmentManager().findFragmentById(R.id.main_loading);
+
+        getFragmentManager().beginTransaction().hide(mLoadingFragment).commit();
 
         getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
 
@@ -86,6 +92,10 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
             if (token != null) {
                 updateToken(token, state.getLong(STATE_TOKEN_EXPIRES, mDateCalendar.getTimeInMillis()));
             }
+        }
+
+        if (!onRequestIsTokenExpired()) {
+            loadPlaylists();
         }
     }
 
@@ -139,6 +149,8 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
                     updateToken(response.getAccessToken(),
                             now.getTime() + (response.getExpiresIn() * 1000)
                     );
+
+                    loadPlaylists();
 
                     break;
 
@@ -206,8 +218,6 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
 
             mLoginButton.setVisibility(View.INVISIBLE);
 
-            getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
-
             // Show the logout button
             mLogoutButton.setLayoutParams(WRAP_CONTENT_LAYOUT);
             mLogoutButton.setVisibility(View.VISIBLE);
@@ -217,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
 
             mLoginButton.setVisibility(View.VISIBLE);
 
+            getFragmentManager().beginTransaction().hide(mLoadingFragment).commit();
             getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
 
             // Hide the logout button
@@ -226,12 +237,22 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
         }
     }
 
+    private void loadPlaylists() {
+        getFragmentManager().beginTransaction().show(mLoadingFragment).commit();
+
+        mLoadingFragment.setLoadingTopic("party shit");
+
+        // TODO: Start a session with the Party API
+
+        //getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
+    }
+
     public void login(View view) {
         mTryingLogin = true;
 
-        if (mLoginButton != null) {
-            mLoginButton.setVisibility(View.INVISIBLE);
-        }
+        mLoginButton.setVisibility(View.INVISIBLE);
+
+        getFragmentManager().beginTransaction().show(mLoadingFragment).commit();
 
         AuthenticationRequest.Builder builder =
                 new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
