@@ -11,5 +11,5 @@
     <string name="loading_topic">Loading %1$s…</string>
 
     <string name="join_party">Join a Party</string>
-    <string name="select_playlist">Select a Playlist</string>
+    <string name="select_playlist">Your Playlists</string>
 </resources>
