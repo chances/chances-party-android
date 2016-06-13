@@ -1,8 +1,12 @@
 package com.chancesnow.party;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +26,7 @@ public class QueueActivity extends AppCompatActivity
 
     private View mLoadingView;
     private Button mShuffleButton;
+    private PlayerFragment mPlayerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +39,12 @@ public class QueueActivity extends AppCompatActivity
         mToolbar = (Toolbar) findViewById(R.id.playlists_toolbar);
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
+        if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
-//            actionBar.setTitle(R.string.queue);
-        }
 
-        mLoadingView = findViewById(R.id.playlists_loading);
-//        if (mLoadingView != null)
-//            mLoadingView.setVisibility(View.GONE);
+        mLoadingView = findViewById(R.id.queue_loading);
+        if (mLoadingView != null)
+            mLoadingView.setVisibility(View.GONE);
 
         mShuffleButton = (Button) findViewById(R.id.player_shuffle);
         if (mShuffleButton != null)
@@ -51,16 +54,32 @@ public class QueueActivity extends AppCompatActivity
                             .sizeDp(32),
                     null, null, null
             );
+
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        handleIntent(intent);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
-        menu.findItem(R.id.action_add).setIcon(
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchMenuItem.setIcon(
                 new IconDrawable(this, MaterialCommunityIcons.mdi_plus)
                         .colorRes(R.color.colorAccentLight)
                         .actionBarSize())
+                .setTitle(R.string.add_to_queue)
                 .setVisible(true);
 
         return true;
@@ -79,7 +98,21 @@ public class QueueActivity extends AppCompatActivity
     }
 
     @Override
+    public void onPlayerAttached(PlayerFragment fragment) {
+        mPlayerFragment = fragment;
+    }
+
+    @Override
     public void onTrackChanged(Track oldTrack, Track newTrack) {
 
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+
+            mLoadingView.setVisibility(View.VISIBLE);
+            getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
+        }
     }
 }

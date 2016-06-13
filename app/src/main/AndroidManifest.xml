@@ -20,14 +20,24 @@
         </activity>
         <activity
             android:name=".PlaylistsActivity"
-            android:label="@string/select_playlist" />
+            android:label="@string/select_playlist"
+            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true" />
         <activity
             android:name=".QueueActivity"
             android:label="@string/queue"
-            android:parentActivityName=".PlaylistsActivity" >
+            android:parentActivityName=".PlaylistsActivity"
+            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.chancesnow.party.PlaylistsActivity" />
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"

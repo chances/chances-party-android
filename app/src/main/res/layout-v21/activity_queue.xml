@@ -8,10 +8,11 @@
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:background="@drawable/main_gradient"
-    tools:context="com.chancesnow.party.PlaylistsActivity">
+    android:animateLayoutChanges="true"
+    tools:context="com.chancesnow.party.PlaylistsActivity" >
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/playlists.toolbar"
+        android:id="@+id/queue.toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
@@ -20,7 +21,7 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <LinearLayout
-        android:id="@+id/playlists.loading"
+        android:id="@+id/queue.loading"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"

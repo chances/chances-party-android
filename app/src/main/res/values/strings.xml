@@ -20,5 +20,6 @@
 
     <string name="queue">Queue</string>
     <string name="add_to_queue">Add to Queue</string>
+    <string name="add_to_queue_hint">Add a song to the queue</string>
     <string name="shuffle_play">Shuffle Play</string>
 </resources>
