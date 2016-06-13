@@ -23,7 +23,12 @@ import com.joanzapata.iconify.fonts.MaterialCommunityIcons;
 
 public class QueueToolbarFragment extends Fragment {
 
+    public static final String STATE_SEARCHING = "isSearching";
+    public static final String STATE_SEARCH_QUERY = "searchQuery";
+
+    private boolean restoredFromState;
     private boolean mIsSearching;
+    private String mSearchQuery;
     private boolean mIsSearchQueryFocused;
     private OnQueueToolbarStateChangeListener mListener;
 
@@ -56,6 +61,14 @@ public class QueueToolbarFragment extends Fragment {
         setHasOptionsMenu(true);
 
         mToolbar = (Toolbar) view.findViewById(R.id.queue_toolbar);
+
+        // Restore previous state if available
+        if (savedInstanceState != null) {
+            mIsSearching = savedInstanceState.getBoolean(STATE_SEARCHING, false);
+            mSearchQuery = savedInstanceState.getString(STATE_SEARCH_QUERY, "");
+
+            restoredFromState = true;
+        }
 
         return view;
     }
@@ -95,6 +108,13 @@ public class QueueToolbarFragment extends Fragment {
                 .setTitle(R.string.add_to_queue)
                 .setVisible(true);
 
+        if (restoredFromState) {
+            mSearchMenuItem.expandActionView();
+            mSearchView.setQuery(mSearchQuery, false);
+            mListener.onSearchStateChange(true);
+            mSearchView.findFocus();
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -115,18 +135,11 @@ public class QueueToolbarFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        if (mIsSearching && mSearchView != null)
-            setSearchState(true);
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-//        if (mPlaylists != null) {
-//            savedInstanceState.putParcelable(STATE_PLAYLISTS, mPlaylists);
-//        }
+        savedInstanceState.putBoolean(STATE_SEARCHING, mIsSearching);
+
+        mSearchQuery = mSearchView.getQuery().toString();
+        savedInstanceState.putString(STATE_SEARCH_QUERY, mSearchQuery);
 
         super.onSaveInstanceState(savedInstanceState);
     }
