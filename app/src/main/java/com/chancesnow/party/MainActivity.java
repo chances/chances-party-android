@@ -168,10 +168,11 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 if (!mSpotify.isTokenExpired()) {
                     startActivity(new Intent(MainActivity.this, PlaylistsActivity.class));
+                    overridePendingTransition(0, 0);
                 } else
                     expireTokenAndLogout();
             }
-        }, 500);
+        }, 750);
     }
 
     public void login(View view) {

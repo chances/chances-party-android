@@ -132,10 +132,6 @@ public class PlaylistsActivity extends AppCompatActivity
 
     @Override
     public void onPlaylistSelected(PlaylistSimple item) {
-        getFragmentManager().beginTransaction()
-                .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
-                .hide(mPlaylistsFragment).commit();
-
         mToolbar.setTitle(R.string.queue);
 
         // TODO: Move this to queue activity
