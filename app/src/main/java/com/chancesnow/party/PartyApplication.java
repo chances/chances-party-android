@@ -20,6 +20,7 @@ import java.util.Date;
 
 public class PartyApplication extends Application {
 
+    public static final String PREFS_GENERAL = "PartyPrefs";
     public static final LinearLayout.LayoutParams WRAP_CONTENT_LAYOUT = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     public static final LinearLayout.LayoutParams ZERO_LAYOUT = new LinearLayout.LayoutParams(0, 0, 0);
     public static final LinearLayout.LayoutParams FLEX_LAYOUT = new LinearLayout.LayoutParams(0, 0, 1);
@@ -39,7 +40,7 @@ public class PartyApplication extends Application {
         return mSpotify;
     }
 
-    public void logout(final Activity activityContext) {
+    public void confirmLogout(final Activity activityContext) {
         new AlertDialog.Builder(activityContext)
             .setTitle("Logout")
             .setMessage("Are you sure you want to logout?")
@@ -47,14 +48,30 @@ public class PartyApplication extends Application {
             {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    mSpotify.expireToken();
-
-                    activityContext.startActivity(new Intent(activityContext, MainActivity.class));
+                    logout(activityContext);
                 }
 
             })
             .setNegativeButton("Cancel", null)
             .show();
+    }
+
+    public void logout(Activity activityContext) {
+        dumpUserData();
+
+        activityContext.startActivity(new Intent(activityContext, MainActivity.class));
+    }
+
+    public void dumpUserData() {
+        mSpotify.expireToken();
+
+        SharedPreferences state = getSharedPreferences(PREFS_GENERAL, 0);
+        SharedPreferences.Editor stateEditor = state.edit();
+
+        stateEditor.putString(SpotifyClient.STATE_TOKEN, SpotifyClient.TOKEN_EXPIRED);
+        stateEditor.putString(PlaylistsFragment.STATE_PLAYLISTS, null);
+
+        stateEditor.apply();
     }
 
     public void openWebPage(String url) {

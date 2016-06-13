@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void expireTokenAndLogout() {
-        mSpotify.expireToken();
+        ((PartyApplication) getApplication()).dumpUserData();
 
         setLoginState(false);
     }

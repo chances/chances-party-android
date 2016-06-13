@@ -79,7 +79,7 @@ public class PlaylistsActivity extends AppCompatActivity
 
                 return true;
             case R.id.action_logout:
-                ((PartyApplication) getApplication()).logout(this);
+                ((PartyApplication) getApplication()).confirmLogout(this);
 
                 return true;
         }
@@ -99,9 +99,7 @@ public class PlaylistsActivity extends AppCompatActivity
                 spotifyError.getErrorDetails().message.toLowerCase().contains("token expired")) {
             getFragmentManager().beginTransaction().hide(mPlaylistsFragment).commit();
 
-            mSpotify.expireToken();
-
-            startActivity(new Intent(PlaylistsActivity.this, MainActivity.class));
+            ((PartyApplication) getApplication()).logout(this);
 
             return;
         }

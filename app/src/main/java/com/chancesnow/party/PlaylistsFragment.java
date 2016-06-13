@@ -2,6 +2,7 @@ package com.chancesnow.party;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +13,10 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.chancesnow.party.spotify.SpotifyClient;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +32,11 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
  */
 public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private static final String STATE_PLAYLISTS = "userPlaylists";
+    public static final String STATE_PLAYLISTS = "userPlaylists";
 
     private SpotifyClient mSpotify;
 
+    private Gson mGson;
     private boolean restoredFromState;
     private Pager<PlaylistSimple> mPlaylists;
 
@@ -53,6 +58,7 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_playlist_list, container, false);
 
+        mGson = new Gson();
         restoredFromState = false;
         mPlaylists = null;
 
@@ -116,8 +122,46 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        // Restore from persisted storage if available
+        SharedPreferences state = getActivity()
+                .getSharedPreferences(PartyApplication.PREFS_GENERAL, 0);
+        String playlistsJson = state.getString(STATE_PLAYLISTS, null);
+        if (playlistsJson != null) {
+            try {
+                Type playlistListType = new TypeToken<List<PlaylistSimple>>() {
+                }.getType();
+                List<PlaylistSimple> playlists = mGson.fromJson(playlistsJson, playlistListType);
+
+                if (playlists != null && playlists.size() > 0) {
+                    restoredFromState = true;
+
+                    addPlaylists(playlists);
+                }
+            } catch (Exception ignored) {}
+        }
+
         if (!restoredFromState)
             loadPlaylists();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // Persist the playlists
+        SharedPreferences state = getActivity()
+                .getSharedPreferences(PartyApplication.PREFS_GENERAL, 0);
+        SharedPreferences.Editor stateEditor = state.edit();
+
+        if (mPlaylists != null && mPlaylists.items.size() > 0) {
+            String playlistsJson = mGson.toJson(mPlaylists.items);
+
+            stateEditor.putString(STATE_PLAYLISTS, playlistsJson);
+        } else {
+            stateEditor.putString(STATE_PLAYLISTS, null);
+        }
+
+        stateEditor.apply();
     }
 
     @Override
