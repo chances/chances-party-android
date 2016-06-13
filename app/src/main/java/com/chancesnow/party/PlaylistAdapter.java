@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Image;
@@ -32,11 +33,13 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     private final PlaylistsFragmentListener mListener;
 
     private Drawable mIconPlaceholder;
+    private List<Integer> mUnloadedIcons;
     private int mSelectedIndex;
 
     public PlaylistAdapter(List<PlaylistSimple> items, PlaylistsFragmentListener listener) {
         mValues = items;
         mListener = listener;
+        mUnloadedIcons = new ArrayList<>();
         mSelectedIndex = -1;
     }
 
@@ -82,6 +85,8 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         } else {
             holder.mIcon.setImageDrawable(mIconPlaceholder);
             holder.mIcon.setScaleType(ImageView.ScaleType.CENTER);
+
+            mUnloadedIcons.add(position);
         }
 
         holder.mView.setSelected(mSelectedIndex == position);
@@ -123,6 +128,15 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
 
         if (position >= 0)
             notifyItemChanged(position);
+    }
+
+    public void tryReloadUnloadedIcons() {
+        if (mUnloadedIcons.size() > 0) {
+            for (int position : mUnloadedIcons)
+                notifyItemChanged(position);
+
+            mUnloadedIcons.clear();
+        }
     }
 
     private String getLargestIcon(List<Image> images, int max) {

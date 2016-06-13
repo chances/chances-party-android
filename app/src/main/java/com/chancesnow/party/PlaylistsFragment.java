@@ -8,6 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -90,6 +91,17 @@ public class PlaylistsFragment extends Fragment
         mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setAdapter(new PlaylistAdapter(new ArrayList<PlaylistSimple>(), this));
+        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                event.getAction();
+                if (event.getActionMasked() == MotionEvent.ACTION_SCROLL &&
+                        event.getAxisValue(MotionEvent.AXIS_VSCROLL) > 0.0)
+                    ((PlaylistAdapter) mRecyclerView.getAdapter()).tryReloadUnloadedIcons();
+
+                return false;
+            }
+        });
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.playlist_progress);
         mProgressBar.setVisibility(View.GONE);
