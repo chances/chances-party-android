@@ -23,6 +23,7 @@ public class QueueActivity extends AppCompatActivity
 
     private View mQueueActivity;
     private Toolbar mToolbar;
+    private SearchView mSearchView;
 
     private View mLoadingView;
     private Button mShuffleButton;
@@ -72,8 +73,9 @@ public class QueueActivity extends AppCompatActivity
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) searchMenuItem.getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView = (SearchView) searchMenuItem.getActionView();
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView.setIconifiedByDefault(false);
 
         searchMenuItem.setIcon(
                 new IconDrawable(this, MaterialCommunityIcons.mdi_plus)
@@ -88,6 +90,11 @@ public class QueueActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_search:
+                mLoadingView.setVisibility(View.VISIBLE);
+                getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
+
+                return true;
             case R.id.action_logout:
                 ((PartyApplication) getApplication()).confirmLogout(this);
 
