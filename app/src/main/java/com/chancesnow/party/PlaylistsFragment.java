@@ -212,6 +212,7 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
 
                     if (page == pages - 1) {
                         mProgressBar.setVisibility(View.GONE);
+                        savePlaylists();
                     }
 
                     if (page == 0) {
