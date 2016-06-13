@@ -30,7 +30,8 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
  * Activities containing this fragment MUST implement the {@link OnPlaylistListListener}
  * interface.
  */
-public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class PlaylistsFragment extends Fragment
+        implements SwipeRefreshLayout.OnRefreshListener, PlaylistsFragmentListener {
 
     public static final String STATE_PLAYLISTS = "userPlaylists";
 
@@ -88,7 +89,7 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
         // Set the adapter
         mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        mRecyclerView.setAdapter(new PlaylistAdapter(new ArrayList<PlaylistSimple>(), mListener));
+        mRecyclerView.setAdapter(new PlaylistAdapter(new ArrayList<PlaylistSimple>(), this));
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.playlist_progress);
         mProgressBar.setVisibility(View.GONE);
@@ -268,16 +269,12 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
         loadPlaylists();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+    @Override
+    public void onPlaylistSelected(PlaylistSimple item) {
+        if (mListener != null)
+            mListener.onPlaylistSelected(item);
+    }
+
     public interface OnPlaylistListListener {
         void onAttached(PlaylistsFragment self);
         void onPlaylistLoadError(SpotifyError spotifyError);

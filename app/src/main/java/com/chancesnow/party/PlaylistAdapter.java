@@ -25,11 +25,11 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
     private final List<PlaylistSimple> mValues;
-    private final PlaylistsFragment.OnPlaylistListListener mListener;
+    private final PlaylistsFragmentListener mListener;
 
     private int mSelectedIndex;
 
-    public PlaylistAdapter(List<PlaylistSimple> items, PlaylistsFragment.OnPlaylistListListener listener) {
+    public PlaylistAdapter(List<PlaylistSimple> items, PlaylistsFragmentListener listener) {
         mValues = items;
         mListener = listener;
         mSelectedIndex = -1;
@@ -78,9 +78,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
 
                 v.setSelected(true);
 
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
+                if (mListener != null) {
                     mListener.onPlaylistSelected(holder.mItem);
                 }
             }
