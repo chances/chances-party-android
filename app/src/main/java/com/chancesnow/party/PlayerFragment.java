@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 
 import com.chancesnow.party.spotify.SpotifyClient;
 
+import kaaes.spotify.webapi.android.models.Track;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,7 +50,7 @@ public class PlayerFragment extends Fragment {
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onRequestIsTokenExpired();
+            mListener.onTrackChanged(null, null);
         }
     }
 
@@ -84,6 +86,6 @@ public class PlayerFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnPlayerInteractionListener {
-        boolean onRequestIsTokenExpired();
+        void onTrackChanged(Track oldTrack, Track newTrack);
     }
 }

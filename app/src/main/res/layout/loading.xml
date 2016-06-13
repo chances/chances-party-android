@@ -1,18 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/loading"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.chancesnow.party.LoadingFragment">
+    android:gravity="center">
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-        android:id="@+id/loading.progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:indeterminate="true"
-        android:indeterminateOnly="true"
-        android:tint="@color/colorAccent" />
+    android:id="@+id/loading.progress"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:indeterminate="true"
+    android:indeterminateOnly="true"
+    android:tint="@color/colorAccent" />
 
     <TextView
         android:id="@+id/loading.loading"

@@ -3,6 +3,7 @@ package com.chancesnow.party;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,22 +25,25 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
  * Activities containing this fragment MUST implement the {@link OnPlaylistListListener}
  * interface.
  */
-public class PlaylistFragment extends Fragment {
+public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String STATE_PLAYLISTS = "userPlaylists";
+
+    private SpotifyClient mSpotify;
 
     private boolean restoredFromState;
     private Pager<PlaylistSimple> mPlaylists;
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
 
     private OnPlaylistListListener mListener;
 
-    public PlaylistFragment() {}
+    public PlaylistsFragment() {}
 
     @SuppressWarnings("unused")
-    public static PlaylistFragment newInstance(int columnCount) {
-        return new PlaylistFragment();
+    public static PlaylistsFragment newInstance(int columnCount) {
+        return new PlaylistsFragment();
     }
 
     @Override
@@ -50,10 +54,14 @@ public class PlaylistFragment extends Fragment {
         restoredFromState = false;
         mPlaylists = null;
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.playlist_swipeRefresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+
         // Set the adapter
         mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        mRecyclerView.setAdapter(new PlaylistViewAdapter(new ArrayList<PlaylistSimple>(), mListener));
+        mRecyclerView.setAdapter(new PlaylistAdapter(new ArrayList<PlaylistSimple>(), mListener));
 
         // Restore previous state if available
         if (savedInstanceState != null) {
@@ -70,7 +78,6 @@ public class PlaylistFragment extends Fragment {
         return view;
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -84,6 +91,9 @@ public class PlaylistFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnPlaylistListListener) {
             mListener = (OnPlaylistListListener) context;
+            mListener.onAttached(this);
+
+            mSpotify = ((PartyApplication) getActivity().getApplication()).getSpotifyClient();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnPlaylistListListener");
@@ -105,29 +115,46 @@ public class PlaylistFragment extends Fragment {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    public void loadPlaylists(SpotifyClient spotifyClient) {
-        spotifyClient.getOwnPlaylists(new SpotifyClient.OwnPlaylistsCallback() {
-            @Override
-            public void failure(SpotifyError spotifyError) {
-                if (mListener != null)
-                    mListener.onPlaylistLoadError(spotifyError);
-            }
+    public void loadPlaylists() {
+        if (mSpotify != null) {
+            mSwipeRefreshLayout.setRefreshing(true);
 
-            @Override
-            public void success(Pager<PlaylistSimple> playlists) {
-                if (mListener != null)
-                    mListener.onPlaylistsLoaded();
+            mSpotify.getOwnPlaylists(new SpotifyClient.OwnPlaylistsCallback() {
+                @Override
+                public void failure(SpotifyError spotifyError) {
+                    if (mListener != null)
+                        mListener.onPlaylistLoadError(spotifyError);
+                }
 
-                mPlaylists = playlists;
-                addPlaylists(playlists.items);
+                @Override
+                public void success(Pager<PlaylistSimple> playlists) {
+                    if (mPlaylists != null && mPlaylists.items.size() > 0) {
+                        clearList();
+                    }
 
-                // TODO: Handle paging?
-            }
-        });
+
+
+                    mPlaylists = playlists;
+                    addPlaylists(playlists.items);
+
+                    mSwipeRefreshLayout.setRefreshing(false);
+
+                    // TODO: Handle paging?
+
+                    // Scroll to top of list
+                    LinearLayoutManager layoutManager = (LinearLayoutManager) mRecyclerView
+                            .getLayoutManager();
+                    layoutManager.scrollToPositionWithOffset(0, 0);
+
+                    if (mListener != null)
+                        mListener.onPlaylistsLoaded();
+                }
+            });
+        }
     }
 
     private void clearList() {
-        PlaylistViewAdapter adapter = (PlaylistViewAdapter) mRecyclerView.getAdapter();
+        PlaylistAdapter adapter = (PlaylistAdapter) mRecyclerView.getAdapter();
         int count = adapter.getItemCount();
         adapter.getPlaylists().clear();
 
@@ -135,18 +162,23 @@ public class PlaylistFragment extends Fragment {
     }
 
     private void addPlaylist(PlaylistSimple playlist) {
-        PlaylistViewAdapter adapter = (PlaylistViewAdapter) mRecyclerView.getAdapter();
+        PlaylistAdapter adapter = (PlaylistAdapter) mRecyclerView.getAdapter();
         adapter.getPlaylists().add(playlist);
 
         adapter.notifyItemInserted(adapter.getItemCount() - 1);
     }
 
     private void addPlaylists(List<PlaylistSimple> playlists) {
-        PlaylistViewAdapter adapter = (PlaylistViewAdapter) mRecyclerView.getAdapter();
+        PlaylistAdapter adapter = (PlaylistAdapter) mRecyclerView.getAdapter();
         int count = adapter.getItemCount();
         adapter.getPlaylists().addAll(playlists);
 
         adapter.notifyItemRangeInserted(count - 1, playlists.size());
+    }
+
+    @Override
+    public void onRefresh() {
+        loadPlaylists();
     }
 
     /**
@@ -160,6 +192,7 @@ public class PlaylistFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnPlaylistListListener {
+        void onAttached(PlaylistsFragment self);
         void onPlaylistLoadError(SpotifyError spotifyError);
         void onPlaylistsLoaded();
         void onPlaylistSelected(PlaylistSimple item);

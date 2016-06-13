@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/playlist.list"
+    android:id="@+id/playlist.swipeRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="@dimen/text_margin"
-    android:layout_marginRight="@dimen/text_margin"
-    android:scrollbars="vertical"
-    app:layoutManager="LinearLayoutManager"
-    tools:listitem="@layout/fragment_playlist"
-    android:name="com.chancesnow.party.PlaylistFragment"
-    tools:context="com.chancesnow.party.PlaylistFragment" />
+    android:layout_marginRight="@dimen/text_margin" >
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/playlist.list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/fragment_playlist"
+        android:name="com.chancesnow.party.PlaylistsFragment"
+        tools:context=".PlaylistsFragment" />
+</android.support.v4.widget.SwipeRefreshLayout>

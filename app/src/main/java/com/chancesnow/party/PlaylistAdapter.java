@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chancesnow.party.PlaylistFragment.OnPlaylistListListener;
+import com.chancesnow.party.PlaylistsFragment.OnPlaylistListListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
@@ -19,18 +19,27 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link PlaylistSimple} and makes a call to the
  * specified {@link OnPlaylistListListener}.
- * TODO: Replace the implementation with code for your data type.
  */
-public class PlaylistViewAdapter extends RecyclerView.Adapter<PlaylistViewAdapter.ViewHolder> {
+public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
 
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
     private final List<PlaylistSimple> mValues;
-    private final PlaylistFragment.OnPlaylistListListener mListener;
+    private final PlaylistsFragment.OnPlaylistListListener mListener;
 
-    public PlaylistViewAdapter(List<PlaylistSimple> items, PlaylistFragment.OnPlaylistListListener listener) {
+    private int mSelectedIndex;
+
+    public PlaylistAdapter(List<PlaylistSimple> items, PlaylistsFragment.OnPlaylistListListener listener) {
         mValues = items;
         mListener = listener;
+        mSelectedIndex = -1;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        mSelectedIndex = -1;
+
+        super.onAttachedToRecyclerView(recyclerView);
     }
 
     @Override
@@ -56,11 +65,17 @@ public class PlaylistViewAdapter extends RecyclerView.Adapter<PlaylistViewAdapte
             Picasso.with(holder.mView.getContext()).load(iconUrl).into(holder.mIcon);
         }
 
-        holder.mView.setSelected(false);
+        holder.mView.setSelected(mSelectedIndex == position);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int oldIndex = mSelectedIndex;
+                mSelectedIndex = holder.getAdapterPosition();
+
+                if (oldIndex >= 0)
+                    notifyItemChanged(oldIndex);
+
                 v.setSelected(true);
 
                 if (null != mListener) {
