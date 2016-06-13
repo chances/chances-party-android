@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.SearchView;
 
@@ -76,6 +77,25 @@ public class QueueActivity extends AppCompatActivity
         mSearchView = (SearchView) searchMenuItem.getActionView();
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         mSearchView.setIconifiedByDefault(false);
+        mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    final View queryTextView = view.findFocus();
+                    final InputMethodManager keyboard = (InputMethodManager)
+                            getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                    if (keyboard.isActive()) {
+                        mSearchView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                keyboard.showSoftInput(queryTextView, 0);
+                            }
+                        });
+                    }
+                }
+            }
+        });
 
         searchMenuItem.setIcon(
                 new IconDrawable(this, MaterialCommunityIcons.mdi_plus)
@@ -93,6 +113,8 @@ public class QueueActivity extends AppCompatActivity
             case R.id.action_search:
                 mLoadingView.setVisibility(View.VISIBLE);
                 getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
+
+                mSearchView.requestFocus();
 
                 return true;
             case R.id.action_logout:
