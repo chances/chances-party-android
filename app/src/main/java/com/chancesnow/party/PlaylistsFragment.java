@@ -112,6 +112,14 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (!restoredFromState)
+            loadPlaylists();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         if (mPlaylists != null) {
             savedInstanceState.putParcelable(STATE_PLAYLISTS, mPlaylists);
@@ -120,7 +128,11 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    public void loadPlaylists() {
+    public void refreshPlaylists() {
+        loadPlaylists();
+    }
+
+    private void loadPlaylists() {
         if (mSpotify != null) {
             mSwipeRefreshLayout.setRefreshing(true);
             mProgressBar.setVisibility(View.VISIBLE);

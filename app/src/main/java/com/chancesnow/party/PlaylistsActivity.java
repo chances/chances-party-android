@@ -56,7 +56,6 @@ public class PlaylistsActivity extends AppCompatActivity
         mLoadingView = findViewById(R.id.playlists_loading);
 
         getFragmentManager().beginTransaction().hide(mPlaylistsFragment).commit();
-        mPlaylistsFragment.loadPlaylists();
     }
 
     @Override
@@ -86,7 +85,7 @@ public class PlaylistsActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                mPlaylistsFragment.loadPlaylists();
+                mPlaylistsFragment.refreshPlaylists();
 
                 return true;
             case R.id.action_logout:
