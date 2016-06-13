@@ -147,8 +147,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (!mSpotify.isTokenExpired()) {
-                    startActivity(new Intent(MainActivity.this, PlaylistsActivity.class));
+                    Intent intent = new Intent(MainActivity.this, PlaylistsActivity.class);
+                    intent.addFlags(
+                            Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK
+                    );
+                    startActivity(intent);
                     overridePendingTransition(0, 0);
+                    finish();
                 } else
                     expireTokenAndLogout();
             }

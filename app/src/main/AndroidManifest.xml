@@ -27,8 +27,7 @@
             android:name=".QueueActivity"
             android:label="@string/queue"
             android:parentActivityName=".PlaylistsActivity"
-            android:launchMode="singleTask"
-            android:alwaysRetainTaskState="true" >
+            android:launchMode="singleTop" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.chancesnow.party.PlaylistsActivity" />
