@@ -57,7 +57,11 @@ public class QueueActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
-        // TODO: Does this activity need other menu items?
+        menu.findItem(R.id.action_add).setIcon(
+                new IconDrawable(this, MaterialCommunityIcons.mdi_plus)
+                        .colorRes(R.color.colorAccentLight)
+                        .actionBarSize())
+                .setVisible(true);
 
         return true;
     }
