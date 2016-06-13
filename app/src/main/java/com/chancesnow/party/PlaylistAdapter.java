@@ -1,5 +1,6 @@
 package com.chancesnow.party;
 
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chancesnow.party.PlaylistsFragment.OnPlaylistListListener;
+import com.joanzapata.iconify.IconDrawable;
+import com.joanzapata.iconify.fonts.MaterialCommunityIcons;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -27,12 +31,23 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     private final List<PlaylistSimple> mValues;
     private final PlaylistsFragmentListener mListener;
 
+    private Drawable mIconPlaceholder;
     private int mSelectedIndex;
 
     public PlaylistAdapter(List<PlaylistSimple> items, PlaylistsFragmentListener listener) {
         mValues = items;
         mListener = listener;
         mSelectedIndex = -1;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+
+        mIconPlaceholder =
+                new IconDrawable(
+                        recyclerView.getContext(), MaterialCommunityIcons.mdi_music_note)
+                        .colorRes(R.color.colorAccentLightControl);
     }
 
     @Override
@@ -55,7 +70,18 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         // Download the icon, if available
         String iconUrl = getLargestIcon(mValues.get(position).images, 500);
         if (iconUrl != null) {
-            Picasso.with(holder.mView.getContext()).load(iconUrl).into(holder.mIcon);
+            RequestCreator picassoIcon = Picasso
+                    .with(holder.mIcon.getContext())
+                    .load(iconUrl)
+                    .placeholder(mIconPlaceholder);
+
+            if (holder.mIcon.getWidth() > 0)
+                picassoIcon.resize(holder.mIcon.getWidth(), holder.mIcon.getHeight());
+
+            picassoIcon.into(holder.mIcon);
+        } else {
+            holder.mIcon.setImageDrawable(mIconPlaceholder);
+            holder.mIcon.setScaleType(ImageView.ScaleType.CENTER);
         }
 
         holder.mView.setSelected(mSelectedIndex == position);
