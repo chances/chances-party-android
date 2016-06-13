@@ -89,6 +89,9 @@ public class SpotifyClient {
                 api.setAccessToken(mSpotifyApiToken);
 
                 return true;
+            } else {
+                mSpotifyApiToken = TOKEN_EXPIRED;
+                mSpotifyApiTokenExpires = new Date();
             }
         }
 
