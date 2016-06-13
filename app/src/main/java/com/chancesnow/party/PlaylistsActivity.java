@@ -28,10 +28,6 @@ public class PlaylistsActivity extends AppCompatActivity
     private View mPlaylistsActivity;
 
     private Toolbar mToolbar;
-    private ActionBar mActionBar;
-    private Menu mToolbarMenu;
-    private MenuItem mRefreshMenuItem;
-    private MenuItem mNowPlayingMenuItem;
 
     private View mLoadingView;
 
@@ -62,15 +58,9 @@ public class PlaylistsActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
-        mToolbarMenu = menu;
+        menu.findItem(R.id.action_refresh).setVisible(true);
 
-        mRefreshMenuItem = menu.findItem(R.id.action_refresh).setIcon(
-                new IconDrawable(this, MaterialCommunityIcons.mdi_refresh)
-                        .colorRes(R.color.colorAccentLight)
-                        .actionBarSize())
-                .setVisible(true);
-
-        mNowPlayingMenuItem = menu.findItem(R.id.action_now_playing).setIcon(
+        menu.findItem(R.id.action_now_playing).setIcon(
                 new IconDrawable(this, MaterialCommunityIcons.mdi_playlist_play)
                         .colorRes(R.color.colorAccentLight)
                         .actionBarSize())

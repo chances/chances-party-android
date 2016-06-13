@@ -24,12 +24,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int SPOTIFY_AUTH_REQUEST_CODE = 2977; // Tel keys: C-X-S-S
     private static final String CLIENT_ID = "658e37b135ea40bcabd7b3c61c8070f6";
     private static final String REDIRECT_URI = "chancesparty://callback";
-    private static final String TOKEN_EXPIRED = "expired";
-
-    private static final String PREFS_GENERAL = "PartyPrefs";
-
-    private static final String STATE_TOKEN = "spotifyApiToken";
-    private static final String STATE_TOKEN_EXPIRES = "spotifyApiTokenExpires";
 
     private boolean mTryingLogin;
 
@@ -37,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
     private View mMainActivity;
 
-    private View mTitle;
     private Button mLoginButton;
     private View mLoadingView;
 
@@ -52,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
         mTryingLogin = false;
 
         mMainActivity = findViewById(R.id.main);
-
-        mTitle = findViewById(R.id.main_title);
 
 //        getFragmentManager().beginTransaction().add(R.id.main_player, mPlayerFragment).commit();
 
