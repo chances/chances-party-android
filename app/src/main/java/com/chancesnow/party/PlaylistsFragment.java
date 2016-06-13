@@ -59,6 +59,7 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.playlist_swipeRefresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        mSwipeRefreshLayout.setDistanceToTriggerSync(200);
 
         // Set the adapter
         mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_list);
