@@ -12,15 +12,6 @@ import com.chancesnow.party.spotify.SpotifyClient;
 
 import kaaes.spotify.webapi.android.models.Track;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link OnPlayerInteractionListener} interface
- * to handle interaction events.
- * Use the {@link PlayerFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class PlayerFragment extends Fragment {
 
     private SpotifyClient mSpotify;
@@ -28,16 +19,6 @@ public class PlayerFragment extends Fragment {
     private OnPlayerInteractionListener mListener;
 
     public PlayerFragment() {}
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment PlayerFragment.
-     */
-    public static PlayerFragment newInstance() {
-        return new PlayerFragment();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,16 +54,6 @@ public class PlayerFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnPlayerInteractionListener {
         void onPlayerAttached(PlayerFragment fragment);
         void onTrackChanged(Track oldTrack, Track newTrack);
