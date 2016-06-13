@@ -1,5 +1,6 @@
 package com.chancesnow.party;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -106,12 +107,12 @@ public class PlaylistsActivity extends AppCompatActivity
     public void onPlaylistLoadError(SpotifyError spotifyError) {
         // The access token has expired
         if (spotifyError.getRetrofitError().getResponse().getStatus() == 401 &&
-                spotifyError.getErrorDetails().message.contains("token expired")) {
+                spotifyError.getErrorDetails().message.toLowerCase().contains("token expired")) {
             getFragmentManager().beginTransaction().hide(mPlaylistsFragment).commit();
 
             mSpotify.expireToken();
 
-            // TODO: Navigate to main activity with logout intent
+            startActivity(new Intent(PlaylistsActivity.this, MainActivity.class));
 
             return;
         }
