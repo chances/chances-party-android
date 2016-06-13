@@ -22,7 +22,8 @@ import kaaes.spotify.webapi.android.models.Track;
  * create an instance of this fragment.
  */
 public class PlayerFragment extends Fragment {
-    private SpotifyClient mSpotifyClient;
+
+    private SpotifyClient mSpotify;
 
     private OnPlayerInteractionListener mListener;
 
@@ -32,11 +33,9 @@ public class PlayerFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param token Spotify API token
-     * @param expires Expiration date of Spotify API token (unix timestamp)
      * @return A new instance of fragment PlayerFragment.
      */
-    public static PlayerFragment newInstance(String token, long expires) {
+    public static PlayerFragment newInstance() {
         return new PlayerFragment();
     }
 
@@ -60,6 +59,8 @@ public class PlayerFragment extends Fragment {
         if (context instanceof OnPlayerInteractionListener) {
             mListener = (OnPlayerInteractionListener) context;
             mListener.onPlayerAttached(this);
+
+            mSpotify = ((PartyApplication) getActivity().getApplication()).getSpotifyClient();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnPlayerInteractionListener");
@@ -70,10 +71,6 @@ public class PlayerFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    public void setSpotifyClient(SpotifyClient spotifyClient) {
-        this.mSpotifyClient = spotifyClient;
     }
 
     /**
