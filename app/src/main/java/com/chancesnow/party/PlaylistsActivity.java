@@ -117,16 +117,13 @@ public class PlaylistsActivity extends AppCompatActivity
 
     @Override
     public void onPlaylistSelected(PlaylistSimple item) {
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(new Intent(PlaylistsActivity.this, QueueActivity.class));
-                overridePendingTransition(0, 0); // TODO: Set slide left out and in transition
+        mPlaylistsFragment.savePlaylists();
 
-                // TODO: Provide the Queue activity with selected playlist
+        startActivity(new Intent(PlaylistsActivity.this, QueueActivity.class));
+        overridePendingTransition(0, 0); // TODO: Set slide left out and in transition
 
-                // TODO: Setup queue stuff?
-            }
-        }, 400);
+        // TODO: Provide the Queue activity with selected playlist
+
+        // TODO: Setup queue stuff?
     }
 }

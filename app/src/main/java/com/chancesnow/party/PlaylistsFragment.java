@@ -148,6 +148,23 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
     public void onStop() {
         super.onStop();
 
+        savePlaylists();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        if (mPlaylists != null) {
+            savedInstanceState.putParcelable(STATE_PLAYLISTS, mPlaylists);
+        }
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void refreshPlaylists() {
+        loadPlaylists();
+    }
+
+    public void savePlaylists() {
         // Persist the playlists
         SharedPreferences state = getActivity()
                 .getSharedPreferences(PartyApplication.PREFS_GENERAL, 0);
@@ -162,19 +179,6 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         stateEditor.apply();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        if (mPlaylists != null) {
-            savedInstanceState.putParcelable(STATE_PLAYLISTS, mPlaylists);
-        }
-
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    public void refreshPlaylists() {
-        loadPlaylists();
     }
 
     private void loadPlaylists() {
