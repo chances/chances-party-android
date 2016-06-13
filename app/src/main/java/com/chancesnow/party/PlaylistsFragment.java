@@ -53,6 +53,24 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
         return new PlaylistsFragment();
     }
 
+    // The following lifecycle methods are ordered chronologically
+    //   That is, the order they get called by Android
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof OnPlaylistListListener) {
+            mListener = (OnPlaylistListListener) context;
+            mListener.onAttached(this);
+
+            mSpotify = ((PartyApplication) getActivity().getApplication()).getSpotifyClient();
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnPlaylistListListener");
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,34 +109,6 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        if (restoredFromState && mListener != null)
-            mListener.onPlaylistsLoaded();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnPlaylistListListener) {
-            mListener = (OnPlaylistListListener) context;
-            mListener.onAttached(this);
-
-            mSpotify = ((PartyApplication) getActivity().getApplication()).getSpotifyClient();
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnPlaylistListListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -145,10 +135,11 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onResume() {
+        super.onResume();
 
-        savePlaylists();
+        if (restoredFromState && mListener != null)
+            mListener.onPlaylistsLoaded();
     }
 
     @Override
@@ -158,6 +149,24 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        savePlaylists();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     public void refreshPlaylists() {
