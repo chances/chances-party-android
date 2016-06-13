@@ -71,17 +71,10 @@ public class MainActivity extends AppCompatActivity {
                     null, null, null
             );
 
-        // Restore previous state if available
-        if (savedInstanceState != null) {
-            String token = savedInstanceState.getString(STATE_TOKEN);
-
-            mSpotify
-                    .updateToken(token, savedInstanceState.getLong(STATE_TOKEN_EXPIRES));
-        } else {
-            // Restore persisted state if available
-            if (mSpotify.loadToken()) {
-                gotoPlaylists();
-            }
+        // Restore persisted state if available
+        if (mSpotify.loadToken()) {
+            setLoginState(true);
+            gotoPlaylists();
         }
     }
 
@@ -90,24 +83,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
 
         mSpotify.saveToken();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle savedInstanceState) {
-
-        // Persist data if token is not expired
-        if (!mSpotify.isTokenExpired()) {
-            savedInstanceState.putString(STATE_TOKEN, mSpotify.getToken());
-            savedInstanceState.putLong(
-                    STATE_TOKEN_EXPIRES,
-                    mSpotify.getTokenExpirationDateTimestamp()
-            );
-        } else {
-            // Persist expired state
-            savedInstanceState.putString(STATE_TOKEN, SpotifyClient.TOKEN_EXPIRED);
-        }
-
-        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -176,13 +151,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setLoginState(boolean isLoggedIn) {
         if (isLoggedIn) {
-
-            mTitle.setVisibility(View.INVISIBLE);
-
             mLoginButton.setVisibility(View.INVISIBLE);
         } else {
-            mTitle.setVisibility(View.VISIBLE);
-
             mLoginButton.setVisibility(View.VISIBLE);
             mLoadingView.setVisibility(View.GONE);
         }
