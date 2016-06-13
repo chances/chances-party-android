@@ -29,15 +29,12 @@
         <include layout="@layout/loading" />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:text="Foobar" android:background="@android:color/holo_blue_dark" />
-
     <fragment
         android:id="@+id/playlists.playlists"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:name="com.chancesnow.party.PlaylistsFragment"
         tools:layout="@layout/fragment_playlist_list" />
 
