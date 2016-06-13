@@ -1,19 +1,11 @@
 package com.chancesnow.party;
 
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.SearchView;
 
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.MaterialCommunityIcons;
@@ -21,14 +13,11 @@ import com.joanzapata.iconify.fonts.MaterialCommunityIcons;
 import kaaes.spotify.webapi.android.models.Track;
 
 public class QueueActivity extends AppCompatActivity
-        implements PlayerFragment.OnPlayerInteractionListener {
-
-    private boolean mIsSearching;
-    private boolean mIsSearchQueryFocused;
+        implements QueueToolbarFragment.OnQueueToolbarStateChangeListener,
+        PlayerFragment.OnPlayerInteractionListener {
 
     private View mQueueActivity;
-    private Toolbar mToolbar;
-    private SearchView mSearchView;
+    private QueueToolbarFragment mQueueToolbarFragment;
 
     private View mLoadingView;
     private Button mShuffleButton;
@@ -41,16 +30,7 @@ public class QueueActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_queue);
 
-        mIsSearching = false;
-        mIsSearchQueryFocused = false;
-
         mQueueActivity = findViewById(R.id.queue);
-
-        mToolbar = (Toolbar) findViewById(R.id.queue_toolbar);
-        setSupportActionBar(mToolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
-            actionBar.setDisplayHomeAsUpEnabled(true);
 
         mLoadingView = findViewById(R.id.queue_loading);
         if (mLoadingView != null)
@@ -78,42 +58,21 @@ public class QueueActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-
-        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        MenuItemCompat.setOnActionExpandListener(searchMenuItem, new SearchActionExpandListener());
-
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        mSearchView = (SearchView) searchMenuItem.getActionView();
-        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        mSearchView.setIconifiedByDefault(false);
-        mSearchView.setOnQueryTextFocusChangeListener(new SearchQueryTextFocusChangeListener());
-
-        searchMenuItem.setIcon(
-                new IconDrawable(this, MaterialCommunityIcons.mdi_plus)
-                        .colorRes(R.color.colorAccentLight)
-                        .actionBarSize())
-                .setTitle(R.string.add_to_queue)
-                .setVisible(true);
-
-        return true;
+    public void onQueueToolbarAttached(QueueToolbarFragment fragment) {
+        mQueueToolbarFragment = fragment;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                setSearchState(true);
-
-                return true;
-            case R.id.action_logout:
-                ((PartyApplication) getApplication()).confirmLogout(this);
-
-                return true;
+    public void onSearchStateChange(boolean searching) {
+        if (searching) {
+            mLoadingView.setVisibility(View.VISIBLE);
+            getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
+            mFooterView.setVisibility(View.GONE);
+        } else {
+            mLoadingView.setVisibility(View.GONE);
+            getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
+            mFooterView.setVisibility(View.VISIBLE);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -130,58 +89,7 @@ public class QueueActivity extends AppCompatActivity
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
 
-            mLoadingView.setVisibility(View.VISIBLE);
-            getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
-        }
-    }
-
-    private void setSearchState(boolean searching) {
-        mIsSearching = searching;
-
-        if (searching) {
-            mLoadingView.setVisibility(View.VISIBLE);
-            getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
-            mFooterView.setVisibility(View.GONE);
-
-            mSearchView.requestFocus();
-        } else {
-            mLoadingView.setVisibility(View.GONE);
-            getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
-            mFooterView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private class SearchActionExpandListener implements MenuItemCompat.OnActionExpandListener {
-        @Override
-        public boolean onMenuItemActionExpand(MenuItem item) {
-            return true;
-        }
-
-        @Override
-        public boolean onMenuItemActionCollapse(MenuItem item) {
-            setSearchState(false);
-
-            return true;
-        }
-    }
-
-    private class SearchQueryTextFocusChangeListener implements View.OnFocusChangeListener {
-        @Override
-        public void onFocusChange(View view, boolean hasFocus) {
-            mIsSearchQueryFocused = hasFocus;
-
-            if (hasFocus) {
-                final View queryTextView = view.findFocus();
-                final InputMethodManager keyboard = (InputMethodManager)
-                        getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                mSearchView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        keyboard.showSoftInput(queryTextView, InputMethodManager.SHOW_IMPLICIT);
-                    }
-                });
-            }
+            mQueueToolbarFragment.enterSearchState(query, true);
         }
     }
 }
