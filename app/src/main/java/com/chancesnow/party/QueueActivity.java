@@ -89,7 +89,7 @@ public class QueueActivity extends AppCompatActivity
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
 
-            mQueueToolbarFragment.enterSearchState(query, true);
+            mQueueToolbarFragment.enterSearchState(query, false);
         }
     }
 }

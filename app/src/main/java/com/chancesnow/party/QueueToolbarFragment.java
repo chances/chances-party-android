@@ -161,10 +161,9 @@ public class QueueToolbarFragment extends Fragment {
     public void enterSearchState(String query, boolean submit) {
         if (mSearchMenuItem != null && !mSearchMenuItem.isActionViewExpanded()) {
             mSearchMenuItem.expandActionView();
-            setSearchState(true);
-
-            mSearchView.clearFocus();
             mSearchView.setQuery(query, submit);
+            mSearchView.clearFocus();
+            mListener.onSearchStateChange(true);
         }
     }
 
