@@ -11,8 +11,6 @@ import android.view.View;
 import android.widget.Button;
 
 import com.chancesnow.party.spotify.SpotifyClient;
-import com.joanzapata.iconify.IconDrawable;
-import com.joanzapata.iconify.fonts.MaterialCommunityIcons;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -52,15 +50,6 @@ public class MainActivity extends AppCompatActivity {
         mLoadingView = findViewById(R.id.loading);
         if (mLoadingView != null)
             mLoadingView.setVisibility(View.GONE);
-
-        Button shuffle = (Button) findViewById(R.id.player_shuffle);
-        if (shuffle != null)
-            shuffle.setCompoundDrawablesRelative(
-                    new IconDrawable(this, MaterialCommunityIcons.mdi_play)
-                            .colorRes(R.color.colorAccentLight)
-                            .sizeDp(32),
-                    null, null, null
-            );
 
         // Restore persisted state if available
         if (mSpotify.loadToken()) {

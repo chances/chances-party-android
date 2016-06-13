@@ -45,9 +45,6 @@ public class PlaylistsActivity extends AppCompatActivity
 
         mToolbar = (Toolbar) findViewById(R.id.playlists_toolbar);
         setSupportActionBar(mToolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
-            actionBar.setTitle(R.string.select_playlist);
 
         mLoadingView = findViewById(R.id.playlists_loading);
 
@@ -120,17 +117,13 @@ public class PlaylistsActivity extends AppCompatActivity
 
     @Override
     public void onPlaylistSelected(PlaylistSimple item) {
-        mToolbar.setTitle(R.string.queue);
-
-        // TODO: Move this to queue activity
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
-            actionBar.setDisplayHomeAsUpEnabled(true);
-
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                // TODO: Navigate to queue activity
+                startActivity(new Intent(PlaylistsActivity.this, QueueActivity.class));
+                overridePendingTransition(0, 0); // TODO: Set slide left out and in transition
+
+                // TODO: Provide the Queue activity with selected playlist
 
                 // TODO: Setup queue stuff?
             }

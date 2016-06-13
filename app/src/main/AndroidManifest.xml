@@ -18,9 +18,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PlaylistsActivity"></activity>
+        <activity
+            android:name=".PlaylistsActivity"
+            android:label="@string/select_playlist" />
+        <activity
+            android:name=".QueueActivity"
+            android:label="@string/queue"
+            android:parentActivityName=".PlaylistsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.chancesnow.party.PlaylistsActivity" />
+        </activity>
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
+
 </manifest>
