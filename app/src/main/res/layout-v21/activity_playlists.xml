@@ -30,14 +30,22 @@
         <include layout="@layout/loading" />
     </LinearLayout>
 
-    <fragment
-        android:id="@+id/main.playlists"
+    <LinearLayout
+        android:id="@+id/playlists.layout"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:name="com.chancesnow.party.PlaylistsFragment"
-        tools:layout="@layout/fragment_playlist_list" />
+        android:visibility="gone" >
+
+        <fragment
+            android:id="@+id/playlists.playlists"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.chancesnow.party.PlaylistsFragment"
+            tools:layout="@layout/fragment_playlist_list" />
+    </LinearLayout>
 
     <include layout="@layout/footer" />
 </LinearLayout>

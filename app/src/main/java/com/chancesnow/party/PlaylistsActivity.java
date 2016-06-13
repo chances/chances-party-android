@@ -30,6 +30,7 @@ public class PlaylistsActivity extends AppCompatActivity
     private Toolbar mToolbar;
 
     private View mLoadingView;
+    private View mLayoutView;
 
     private PlaylistsFragment mPlaylistsFragment;
 
@@ -47,6 +48,7 @@ public class PlaylistsActivity extends AppCompatActivity
         setSupportActionBar(mToolbar);
 
         mLoadingView = findViewById(R.id.playlists_loading);
+        mLayoutView = findViewById(R.id.playlists_layout);
 
         getFragmentManager().beginTransaction().hide(mPlaylistsFragment).commit();
     }
@@ -111,6 +113,7 @@ public class PlaylistsActivity extends AppCompatActivity
     @Override
     public void onPlaylistsLoaded() {
         mLoadingView.setVisibility(View.GONE);
+        mLayoutView.setVisibility(View.VISIBLE);
 
         getFragmentManager().beginTransaction().show(mPlaylistsFragment).commit();
     }
