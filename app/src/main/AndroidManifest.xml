@@ -27,7 +27,8 @@
             android:name=".QueueActivity"
             android:label="@string/queue"
             android:parentActivityName=".PlaylistsActivity"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.chancesnow.party.PlaylistsActivity" />

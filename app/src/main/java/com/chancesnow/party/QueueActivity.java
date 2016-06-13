@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +23,9 @@ import kaaes.spotify.webapi.android.models.Track;
 public class QueueActivity extends AppCompatActivity
         implements PlayerFragment.OnPlayerInteractionListener {
 
+    private boolean mIsSearching;
+    private boolean mIsSearchQueryFocused;
+
     private View mQueueActivity;
     private Toolbar mToolbar;
     private SearchView mSearchView;
@@ -29,12 +33,16 @@ public class QueueActivity extends AppCompatActivity
     private View mLoadingView;
     private Button mShuffleButton;
     private PlayerFragment mPlayerFragment;
+    private View mFooterView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_queue);
+
+        mIsSearching = false;
+        mIsSearchQueryFocused = false;
 
         mQueueActivity = findViewById(R.id.queue);
 
@@ -57,6 +65,8 @@ public class QueueActivity extends AppCompatActivity
                     null, null, null
             );
 
+        mFooterView = findViewById(R.id.footer);
+
         handleIntent(getIntent());
     }
 
@@ -72,30 +82,13 @@ public class QueueActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        MenuItemCompat.setOnActionExpandListener(searchMenuItem, new SearchActionExpandListener());
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (SearchView) searchMenuItem.getActionView();
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         mSearchView.setIconifiedByDefault(false);
-        mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (hasFocus) {
-                    final View queryTextView = view.findFocus();
-                    final InputMethodManager keyboard = (InputMethodManager)
-                            getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                    if (keyboard.isActive()) {
-                        mSearchView.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                keyboard.showSoftInput(queryTextView, 0);
-                            }
-                        });
-                    }
-                }
-            }
-        });
+        mSearchView.setOnQueryTextFocusChangeListener(new SearchQueryTextFocusChangeListener());
 
         searchMenuItem.setIcon(
                 new IconDrawable(this, MaterialCommunityIcons.mdi_plus)
@@ -111,10 +104,7 @@ public class QueueActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                mLoadingView.setVisibility(View.VISIBLE);
-                getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
-
-                mSearchView.requestFocus();
+                setSearchState(true);
 
                 return true;
             case R.id.action_logout:
@@ -142,6 +132,56 @@ public class QueueActivity extends AppCompatActivity
 
             mLoadingView.setVisibility(View.VISIBLE);
             getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
+        }
+    }
+
+    private void setSearchState(boolean searching) {
+        mIsSearching = searching;
+
+        if (searching) {
+            mLoadingView.setVisibility(View.VISIBLE);
+            getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
+            mFooterView.setVisibility(View.GONE);
+
+            mSearchView.requestFocus();
+        } else {
+            mLoadingView.setVisibility(View.GONE);
+            getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
+            mFooterView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private class SearchActionExpandListener implements MenuItemCompat.OnActionExpandListener {
+        @Override
+        public boolean onMenuItemActionExpand(MenuItem item) {
+            return true;
+        }
+
+        @Override
+        public boolean onMenuItemActionCollapse(MenuItem item) {
+            setSearchState(false);
+
+            return true;
+        }
+    }
+
+    private class SearchQueryTextFocusChangeListener implements View.OnFocusChangeListener {
+        @Override
+        public void onFocusChange(View view, boolean hasFocus) {
+            mIsSearchQueryFocused = hasFocus;
+
+            if (hasFocus) {
+                final View queryTextView = view.findFocus();
+                final InputMethodManager keyboard = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                mSearchView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        keyboard.showSoftInput(queryTextView, InputMethodManager.SHOW_IMPLICIT);
+                    }
+                });
+            }
         }
     }
 }
