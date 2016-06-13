@@ -40,5 +40,4 @@
         tools:layout="@layout/fragment_playlist_list" />
 
     <include layout="@layout/footer" />
-
 </LinearLayout>

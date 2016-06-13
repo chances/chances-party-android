@@ -24,6 +24,8 @@ public class SpotifyClient {
     private static final String STATE_TOKEN = "spotifyApiToken";
     private static final String STATE_TOKEN_EXPIRES = "spotifyApiTokenExpires";
 
+    public static final int PAGE_SIZE = 20;
+
     private static SpotifyClient ownInstance = new SpotifyClient(TOKEN_EXPIRED, 0);
 
     private Context mContext;
@@ -144,34 +146,34 @@ public class SpotifyClient {
     }
 
     public void getOwnPlaylists(final OwnPlaylistsCallback callback) {
-        spotify.getMyPlaylists(new SpotifyCallback<Pager<PlaylistSimple>>() {
-            @Override
-            public void failure(SpotifyError spotifyError) {
-                callback.failure(spotifyError);
-            }
-
-            @Override
-            public void success(Pager<PlaylistSimple> playlistSimplePager, Response response) {
-                callback.success(playlistSimplePager);
-            }
-        });
+        getOwnPlaylists(callback, 0, PAGE_SIZE);
     }
 
-    public void getOwnPlaylists(final OwnPlaylistsCallback callback, int offset) {
-        Map<String, Object> options = new ArrayMap<>();
+    private void getOwnPlaylists(final OwnPlaylistsCallback callback, final int offset, final int limit) {
+        final Map<String, Object> options = new ArrayMap<>();
         options.put("offset", offset);
 
-        spotify.getMyPlaylists(options, new SpotifyCallback<Pager<PlaylistSimple>>() {
+        final SpotifyCallback<Pager<PlaylistSimple>> apiCallback = new SpotifyCallback<Pager<PlaylistSimple>>() {
             @Override
             public void failure(SpotifyError spotifyError) {
                 callback.failure(spotifyError);
             }
 
             @Override
-            public void success(Pager<PlaylistSimple> playlistSimplePager, Response response) {
-                callback.success(playlistSimplePager);
+            public void success(Pager<PlaylistSimple> playlistPager, Response response) {
+                int total = playlistPager.total,
+                        pages = (int) Math.ceil((total + 0.0) / limit),
+                        page = playlistPager.offset / limit;
+
+                if (callback.success(playlistPager, page, pages) &&
+                        playlistPager.offset + limit < total) {
+                    options.put("offset", playlistPager.offset + limit);
+                    spotify.getMyPlaylists(options, this);
+                }
             }
-        });
+        };
+
+        spotify.getMyPlaylists(options, apiCallback);
     }
 
     public void getMe(final MeCallback callback) {
@@ -192,9 +194,18 @@ public class SpotifyClient {
         void failure(SpotifyError spotifyError);
     }
 
-    public interface OwnPlaylistsCallback extends Callback {
-        void success(Pager<PlaylistSimple> playlists);
+    public interface PagedCallback<T> extends Callback {
+        /**
+         * Called when a paged request succeeds.
+         * @param response A {@link Pager} paged response
+         * @param page Current page of response
+         * @param pages Total number of pages
+         * @return True if next page should be requested, false otherwise
+         */
+        boolean success(Pager<T> response, int page, int pages);
     }
+
+    public interface OwnPlaylistsCallback extends PagedCallback<PlaylistSimple> {}
 
     public interface MeCallback extends Callback {
         void success(UserPrivate user);

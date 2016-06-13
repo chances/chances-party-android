@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.chancesnow.party.spotify.SpotifyClient;
 
@@ -36,6 +37,7 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
 
     private OnPlaylistListListener mListener;
 
@@ -62,6 +64,9 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
         mRecyclerView = (RecyclerView) view.findViewById(R.id.playlist_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setAdapter(new PlaylistAdapter(new ArrayList<PlaylistSimple>(), mListener));
+
+        mProgressBar = (ProgressBar) view.findViewById(R.id.playlist_progress);
+        mProgressBar.setVisibility(View.GONE);
 
         // Restore previous state if available
         if (savedInstanceState != null) {
@@ -118,6 +123,8 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
     public void loadPlaylists() {
         if (mSpotify != null) {
             mSwipeRefreshLayout.setRefreshing(true);
+            mProgressBar.setVisibility(View.VISIBLE);
+            mProgressBar.setProgress(0);
 
             mSpotify.getOwnPlaylists(new SpotifyClient.OwnPlaylistsCallback() {
                 @Override
@@ -127,27 +134,36 @@ public class PlaylistsFragment extends Fragment implements SwipeRefreshLayout.On
                 }
 
                 @Override
-                public void success(Pager<PlaylistSimple> playlists) {
-                    if (mPlaylists != null && mPlaylists.items.size() > 0) {
+                public boolean success(Pager<PlaylistSimple> playlists, int page, int pages) {
+                    if (page == 0) {
                         clearList();
+
+                        mPlaylists = playlists;
+
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    } else {
+                        mPlaylists.items.addAll(playlists.items);
                     }
 
-
-
-                    mPlaylists = playlists;
                     addPlaylists(playlists.items);
 
-                    mSwipeRefreshLayout.setRefreshing(false);
+                    mProgressBar.setProgress((int) ((page + 1.0) / pages * mProgressBar.getMax()));
 
-                    // TODO: Handle paging?
+                    if (page == pages - 1) {
+                        mProgressBar.setVisibility(View.GONE);
+                    }
 
-                    // Scroll to top of list
-                    LinearLayoutManager layoutManager = (LinearLayoutManager) mRecyclerView
-                            .getLayoutManager();
-                    layoutManager.scrollToPositionWithOffset(0, 0);
+                    if (page == 0) {
+                        // Scroll to top of list
+                        LinearLayoutManager layoutManager = (LinearLayoutManager) mRecyclerView
+                                .getLayoutManager();
+                        layoutManager.scrollToPositionWithOffset(0, 0);
 
-                    if (mListener != null)
-                        mListener.onPlaylistsLoaded();
+                        if (mListener != null)
+                            mListener.onPlaylistsLoaded();
+                    }
+
+                    return page < pages - 1;
                 }
             });
         }
