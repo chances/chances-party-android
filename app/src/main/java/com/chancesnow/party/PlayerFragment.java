@@ -59,6 +59,7 @@ public class PlayerFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnPlayerInteractionListener) {
             mListener = (OnPlayerInteractionListener) context;
+            mListener.onPlayerAttached(this);
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnPlayerInteractionListener");
