@@ -39,7 +39,7 @@ public class PartyApplication extends Application {
         return mSpotify;
     }
 
-    public void logout(Activity activityContext, final View viewContext) {
+    public void logout(final Activity activityContext) {
         new AlertDialog.Builder(activityContext)
             .setTitle("Logout")
             .setMessage("Are you sure you want to logout?")
@@ -47,12 +47,9 @@ public class PartyApplication extends Application {
             {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Snackbar.make(viewContext, "Logout in main activity", Snackbar.LENGTH_LONG)
-                            .show();
-
                     mSpotify.expireToken();
 
-                    // TODO: Navigate to main activity with logout intent
+                    activityContext.startActivity(new Intent(activityContext, MainActivity.class));
                 }
 
             })

@@ -89,7 +89,7 @@ public class PlaylistsActivity extends AppCompatActivity
 
                 return true;
             case R.id.action_logout:
-                ((PartyApplication) getApplication()).logout(this, mPlaylistsActivity);
+                ((PartyApplication) getApplication()).logout(this);
 
                 return true;
         }
