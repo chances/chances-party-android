@@ -136,6 +136,15 @@ public class PlaylistsFragment extends Fragment
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+
+        // TODO: Restore this from state... Sometimes?
+        if (mRecyclerView != null && mRecyclerView.getAdapter() != null)
+            ((PlaylistAdapter) mRecyclerView.getAdapter()).setSelectedIndex(-1);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 

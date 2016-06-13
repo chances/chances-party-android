@@ -94,6 +94,18 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         return mValues;
     }
 
+    public void setSelectedIndex(int position) {
+        int oldIndex = mSelectedIndex;
+
+        mSelectedIndex = position;
+
+        if (oldIndex >= 0)
+            notifyItemChanged(oldIndex);
+
+        if (position >= 0)
+            notifyItemChanged(position);
+    }
+
     private String getLargestIcon(List<Image> images, int max) {
         int width = 0, height = 0;
         String url = null;
