@@ -1,6 +1,7 @@
 package com.chancesnow.party;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.chancesnow.party.spotify.SpotifyClient;
+import com.google.gson.Gson;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.MaterialCommunityIcons;
 
@@ -23,11 +25,16 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
 public class PlaylistsActivity extends AppCompatActivity
         implements PlaylistsFragment.OnPlaylistListListener {
 
+    public static final String ACTION_LOAD_PLAYLIST = "queueLoadPlaylist";
+    public static final String STATE_PLAYLIST_LOADED = "playlistLoaded";
+
+    private boolean mPlaylistLoaded;
     private SpotifyClient mSpotify;
 
     private View mPlaylistsActivity;
 
     private Toolbar mToolbar;
+    private MenuItem mNowPlayingMenuItem;
 
     private View mLoadingView;
     private View mLayoutView;
@@ -40,6 +47,7 @@ public class PlaylistsActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_playlists);
 
+        mPlaylistLoaded = false;
         mSpotify = ((PartyApplication) getApplication()).getSpotifyClient();
 
         mPlaylistsActivity = findViewById(R.id.playlists);
@@ -51,6 +59,27 @@ public class PlaylistsActivity extends AppCompatActivity
         mLayoutView = findViewById(R.id.playlists_layout);
 
         getFragmentManager().beginTransaction().hide(mPlaylistsFragment).commit();
+
+        if (savedInstanceState != null) {
+            mPlaylistLoaded = savedInstanceState.getBoolean(STATE_PLAYLIST_LOADED, false);
+
+            if (mPlaylistLoaded) {
+                // Check for saved selected playlist, switching to queue if available
+                SharedPreferences state = getSharedPreferences(PartyApplication.PREFS_GENERAL, 0);
+                String playlistJson = state.getString(QueueActivity.STATE_PLAYLIST, null);
+                if (playlistJson != null) {
+                    Gson gson = new Gson();
+                    try {
+                        PlaylistSimple playlist = gson.fromJson(playlistJson, PlaylistSimple.class);
+                        if (playlist != null) {
+                            mPlaylistLoaded = true;
+
+                            navigateToQueue(playlist, true);
+                        }
+                    } catch (Exception ignored) {}
+                }
+            }
+        }
     }
 
     @Override
@@ -59,11 +88,14 @@ public class PlaylistsActivity extends AppCompatActivity
 
         menu.findItem(R.id.action_refresh).setVisible(true);
 
-        menu.findItem(R.id.action_now_playing).setIcon(
+        mNowPlayingMenuItem = menu.findItem(R.id.action_now_playing).setIcon(
                 new IconDrawable(this, MaterialCommunityIcons.mdi_playlist_play)
                         .colorRes(R.color.colorAccentLight)
                         .actionBarSize())
                 .setVisible(false);
+
+        if (mPlaylistLoaded)
+            mNowPlayingMenuItem.setVisible(true);
 
         // TODO: Show the now playing action if intent sourced from queue activity
 
@@ -77,6 +109,10 @@ public class PlaylistsActivity extends AppCompatActivity
                 mPlaylistsFragment.refreshPlaylists();
 
                 return true;
+            case R.id.action_now_playing:
+                startActivity(new Intent(PlaylistsActivity.this, QueueActivity.class));
+
+                return true;
             case R.id.action_logout:
                 ((PartyApplication) getApplication()).confirmLogout(this);
 
@@ -84,6 +120,34 @@ public class PlaylistsActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mPlaylistLoaded && mNowPlayingMenuItem != null)
+            mNowPlayingMenuItem.setVisible(true);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putBoolean(STATE_PLAYLIST_LOADED, mPlaylistLoaded);
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    private void navigateToQueue(PlaylistSimple selectedPlaylist, boolean instant) {
+        mPlaylistLoaded = true;
+
+        Intent intent = new Intent(PlaylistsActivity.this, QueueActivity.class);
+        intent.setAction(ACTION_LOAD_PLAYLIST);
+        intent.putExtra(QueueActivity.STATE_PLAYLIST, selectedPlaylist);
+        startActivity(intent);
+        if (instant)
+            overridePendingTransition(0, 0); // TODO: Set slide left out and in transition
+
+        // TODO: Setup queue stuff?
     }
 
     @Override
@@ -122,11 +186,7 @@ public class PlaylistsActivity extends AppCompatActivity
     public void onPlaylistSelected(PlaylistSimple item) {
         mPlaylistsFragment.savePlaylists();
 
-        startActivity(new Intent(PlaylistsActivity.this, QueueActivity.class));
-        overridePendingTransition(0, 0); // TODO: Set slide left out and in transition
-
-        // TODO: Provide the Queue activity with selected playlist
-
-        // TODO: Setup queue stuff?
+        // Navigate to queue
+        navigateToQueue(item, false);
     }
 }

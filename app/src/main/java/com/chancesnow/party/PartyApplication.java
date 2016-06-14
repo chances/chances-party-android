@@ -69,6 +69,8 @@ public class PartyApplication extends Application {
         SharedPreferences.Editor stateEditor = state.edit();
 
         stateEditor.putString(SpotifyClient.STATE_TOKEN, SpotifyClient.TOKEN_EXPIRED);
+        stateEditor.putBoolean(PlaylistsActivity.STATE_PLAYLIST_LOADED, false);
+        stateEditor.putString(QueueActivity.STATE_PLAYLIST, null);
         stateEditor.putString(PlaylistsFragment.STATE_PLAYLISTS, null);
 
         stateEditor.apply();
