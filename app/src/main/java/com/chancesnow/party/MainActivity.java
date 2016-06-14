@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Most likely auth flow was cancelled
                 default:
-                    // TODO: Handle other cases
+                    // TODO: Handle other cases?
             }
         }
     }

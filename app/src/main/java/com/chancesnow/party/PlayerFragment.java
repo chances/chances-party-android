@@ -2,7 +2,6 @@ package com.chancesnow.party;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,8 +26,8 @@ public class PlayerFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_player, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    // TODO: Hook method into UI event
+    public void onPlaybackStateChanged() {
         if (mListener != null) {
             mListener.onTrackChanged(null, null);
         }

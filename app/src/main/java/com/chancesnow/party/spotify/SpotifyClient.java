@@ -145,6 +145,8 @@ public class SpotifyClient {
         return spotify;
     }
 
+    // TODO: Make these requests in a separate threads
+
     public void getOwnPlaylists(final OwnPlaylistsCallback callback) {
         getOwnPlaylists(callback, 0, PAGE_SIZE);
     }

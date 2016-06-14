@@ -94,8 +94,6 @@ public class PlaylistsActivity extends AppCompatActivity
         if (mPlaylistLoaded)
             mNowPlayingMenuItem.setVisible(true);
 
-        // TODO: Show the now playing action if intent sourced from queue activity
-
         return true;
     }
 
@@ -142,9 +140,7 @@ public class PlaylistsActivity extends AppCompatActivity
         intent.putExtra(QueueActivity.STATE_PLAYLIST, selectedPlaylist);
         startActivity(intent);
         if (instant)
-            overridePendingTransition(0, 0); // TODO: Set slide left out and in transition
-
-        // TODO: Setup queue stuff?
+            overridePendingTransition(0, 0); // TODO: Set slide left out and in transition?
     }
 
     @Override
