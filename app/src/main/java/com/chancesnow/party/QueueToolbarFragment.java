@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
@@ -97,6 +98,10 @@ public class QueueToolbarFragment extends Fragment {
         mSearchView = (SearchView) mSearchMenuItem.getActionView();
         mSearchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getActivity().getComponentName())
+        );
+        int imeOptions = mSearchView.getImeOptions();
+        mSearchView.setImeOptions(
+                imeOptions | EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN
         );
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setOnQueryTextFocusChangeListener(new SearchQueryTextFocusChangeListener());
