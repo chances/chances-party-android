@@ -19,6 +19,7 @@ import kaaes.spotify.webapi.android.models.Track;
 
 public class QueueActivity extends AppCompatActivity
         implements QueueToolbarFragment.OnQueueToolbarStateChangeListener,
+        QueueFragment.OnQueueFragmentListener,
         PlayerFragment.OnPlayerInteractionListener {
 
     public static final String STATE_PLAYLIST = "selectedPlaylist";
@@ -32,6 +33,7 @@ public class QueueActivity extends AppCompatActivity
     private QueueToolbarFragment mQueueToolbarFragment;
 
     private View mLoadingView;
+    private QueueFragment mQueueFragment;
     private Button mShuffleButton;
     private PlayerFragment mPlayerFragment;
     private View mFooterView;
@@ -82,10 +84,11 @@ public class QueueActivity extends AppCompatActivity
         if (mPlaylistIntent != null) {
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null)
-                actionBar.setTitle(getString(R.string.queue_playlist, mPlaylistIntent.name));
+                actionBar.setSubtitle(getString(R.string.queue_playlist, mPlaylistIntent.name));
 
-            mLoadingView.setVisibility(View.VISIBLE);
-            getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
+            mLoadingView.setVisibility(View.GONE);
+            getFragmentManager().beginTransaction().show(mQueueFragment).commit();
+            getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
         }
     }
 
@@ -119,14 +122,21 @@ public class QueueActivity extends AppCompatActivity
     public void onSearchStateChange(boolean searching) {
         if (searching) {
             mLoadingView.setVisibility(View.GONE);
+            getFragmentManager().beginTransaction().hide(mQueueFragment).commit();
             getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
             mFooterView.setVisibility(View.GONE);
         } else {
             // TODO: Handle other queue states
             mLoadingView.setVisibility(View.GONE);
+            getFragmentManager().beginTransaction().show(mQueueFragment).commit();
             getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
             mFooterView.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onQueueAttached(QueueFragment fragment) {
+        mQueueFragment = fragment;
     }
 
     @Override
