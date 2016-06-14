@@ -158,8 +158,9 @@ public class PlaylistsActivity extends AppCompatActivity
     @Override
     public void onPlaylistLoadError(SpotifyError spotifyError) {
         // The access token has expired
+        String message = spotifyError.getErrorDetails().message.toLowerCase();
         if (spotifyError.getRetrofitError().getResponse().getStatus() == 401 &&
-                spotifyError.getErrorDetails().message.toLowerCase().contains("token expired")) {
+                (message.contains("token expired")) || message.contains("invalid access token")) {
             getFragmentManager().beginTransaction().hide(mPlaylistsFragment).commit();
 
             ((PartyApplication) getApplication()).logout(this);
@@ -167,11 +168,21 @@ public class PlaylistsActivity extends AppCompatActivity
             return;
         }
 
+        final PlaylistsActivity that = this;
+
         Log.d("d", spotifyError.toString());
-        Snackbar.make(
-                        mPlaylistsActivity,
-                        spotifyError.getErrorDetails().message, Snackbar.LENGTH_LONG
-                ).show();
+        Snackbar.make(mPlaylistsActivity, "Error: " +
+                spotifyError.getErrorDetails().message +
+                " (" + spotifyError.getErrorDetails().status + ")",
+                Snackbar.LENGTH_LONG)
+                .setCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar snackbar, int event) {
+                        super.onDismissed(snackbar, event);
+
+                        ((PartyApplication) getApplication()).logout(that);
+                    }
+                }).show();
     }
 
     @Override
