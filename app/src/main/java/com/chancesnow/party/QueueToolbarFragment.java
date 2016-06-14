@@ -108,12 +108,8 @@ public class QueueToolbarFragment extends Fragment {
                 .setTitle(R.string.add_to_queue)
                 .setVisible(true);
 
-        if (restoredFromState) {
-            mSearchMenuItem.expandActionView();
-            mSearchView.setQuery(mSearchQuery, false);
-            mListener.onSearchStateChange(true);
-            mSearchView.findFocus();
-        }
+        if (restoredFromState && mIsSearching)
+            enterSearchState(mSearchQuery, true, false);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -122,7 +118,7 @@ public class QueueToolbarFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                setSearchState(true);
+                enterSearchState("", true, false);
 
                 return true;
             case R.id.action_logout:
@@ -158,32 +154,23 @@ public class QueueToolbarFragment extends Fragment {
         return mIsSearchQueryFocused;
     }
 
-    public void enterSearchState(String query, boolean submit) {
+    public void enterSearchState(String query, boolean focus, boolean submit) {
         if (mSearchMenuItem != null && !mSearchMenuItem.isActionViewExpanded()) {
+            if (mListener != null)
+                mListener.onSearchStateChange(mIsSearching = true);
+
             mSearchMenuItem.expandActionView();
             mSearchView.setQuery(query, submit);
-            mSearchView.clearFocus();
-            mListener.onSearchStateChange(true);
+            if (focus)
+                mSearchView.requestFocus();
+            else
+                mSearchView.clearFocus();
         }
     }
 
     public interface OnQueueToolbarStateChangeListener {
         void onQueueToolbarAttached(QueueToolbarFragment fragment);
         void onSearchStateChange(boolean searching);
-    }
-
-    private void setSearchState(boolean searching) {
-        mIsSearching = searching;
-
-        if (mListener != null) {
-            mListener.onSearchStateChange(searching);
-        }
-
-        if (searching)
-            mSearchView.requestFocus();
-        else {
-            mSearchView.setQuery("", false);
-        }
     }
 
     private class SearchActionExpandListener implements MenuItemCompat.OnActionExpandListener {
@@ -194,7 +181,8 @@ public class QueueToolbarFragment extends Fragment {
 
         @Override
         public boolean onMenuItemActionCollapse(MenuItem item) {
-            setSearchState(false);
+            if (mListener != null)
+                mListener.onSearchStateChange(mIsSearching = false);
 
             return true;
         }

@@ -121,10 +121,11 @@ public class QueueActivity extends AppCompatActivity
     @Override
     public void onSearchStateChange(boolean searching) {
         if (searching) {
-            mLoadingView.setVisibility(View.VISIBLE);
+            mLoadingView.setVisibility(View.GONE);
             getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
             mFooterView.setVisibility(View.GONE);
         } else {
+            // TODO: Handle other queue states
             mLoadingView.setVisibility(View.GONE);
             getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
             mFooterView.setVisibility(View.VISIBLE);
@@ -169,7 +170,7 @@ public class QueueActivity extends AppCompatActivity
                 case Intent.ACTION_SEARCH:
                     String query = intent.getStringExtra(SearchManager.QUERY);
 
-                    mQueueToolbarFragment.enterSearchState(query, false);
+                    mQueueToolbarFragment.enterSearchState(query, false, false);
 
                     break;
                 case PlaylistsActivity.ACTION_LOAD_PLAYLIST:
