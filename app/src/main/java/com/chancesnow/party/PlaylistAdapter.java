@@ -67,11 +67,18 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mNameLabel.setText(mValues.get(position).name);
-        holder.mTrackCountLabel.setText(
+
+        int trackCount = mValues.get(position).tracks.total;
+        String trackCountText = (trackCount == 1) ?
+                holder.mView.getContext().getString(
+                        R.string.track_count_singular,
+                        numberFormat.format(trackCount)
+                ) :
                 holder.mView.getContext().getString(
                         R.string.track_count,
-                        numberFormat.format(mValues.get(position).tracks.total)
-                ));
+                        numberFormat.format(trackCount)
+                );
+        holder.mTrackCountLabel.setText(trackCountText);
 
         // Download the icon, if available
         String iconUrl = SpotifyClient.getLargestImage(mValues.get(position).images, 500);
