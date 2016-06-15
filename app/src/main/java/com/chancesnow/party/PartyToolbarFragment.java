@@ -22,7 +22,7 @@ import android.widget.SearchView;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.MaterialCommunityIcons;
 
-public class QueueToolbarFragment extends Fragment {
+public class PartyToolbarFragment extends Fragment {
 
     public static final String STATE_SEARCHING = "isSearching";
     public static final String STATE_SEARCH_QUERY = "searchQuery";
@@ -37,7 +37,7 @@ public class QueueToolbarFragment extends Fragment {
     private MenuItem mSearchMenuItem;
     private SearchView mSearchView;
 
-    public QueueToolbarFragment() {}
+    public PartyToolbarFragment() {}
 
     @Override
     public void onAttach(Context context) {
@@ -57,7 +57,7 @@ public class QueueToolbarFragment extends Fragment {
         mIsSearching = false;
         mIsSearchQueryFocused = false;
 
-        View view = inflater.inflate(R.layout.fragment_queue_toolbar, container, false);
+        View view = inflater.inflate(R.layout.fragment_party_toolbar, container, false);
 
         setHasOptionsMenu(true);
 
@@ -174,7 +174,7 @@ public class QueueToolbarFragment extends Fragment {
     }
 
     public interface OnQueueToolbarStateChangeListener {
-        void onQueueToolbarAttached(QueueToolbarFragment fragment);
+        void onQueueToolbarAttached(PartyToolbarFragment fragment);
         void onSearchStateChange(boolean searching);
     }
 

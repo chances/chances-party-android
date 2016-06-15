@@ -63,7 +63,7 @@ public class PlaylistsActivity extends AppCompatActivity
             if (mPlaylistLoaded) {
                 // Check for saved selected playlist, switching to queue if available
                 SharedPreferences state = getSharedPreferences(PartyApplication.PREFS_GENERAL, 0);
-                String playlistJson = state.getString(QueueActivity.STATE_PLAYLIST, null);
+                String playlistJson = state.getString(PartyActivity.STATE_PLAYLIST, null);
                 if (playlistJson != null) {
                     Gson gson = new Gson();
                     try {
@@ -105,7 +105,7 @@ public class PlaylistsActivity extends AppCompatActivity
 
                 return true;
             case R.id.action_now_playing:
-                startActivity(new Intent(PlaylistsActivity.this, QueueActivity.class));
+                startActivity(new Intent(PlaylistsActivity.this, PartyActivity.class));
 
                 return true;
             case R.id.action_logout:
@@ -135,9 +135,9 @@ public class PlaylistsActivity extends AppCompatActivity
     private void navigateToQueue(PlaylistSimple selectedPlaylist, boolean instant) {
         mPlaylistLoaded = true;
 
-        Intent intent = new Intent(PlaylistsActivity.this, QueueActivity.class);
+        Intent intent = new Intent(PlaylistsActivity.this, PartyActivity.class);
         intent.setAction(ACTION_LOAD_PLAYLIST);
-        intent.putExtra(QueueActivity.STATE_PLAYLIST, selectedPlaylist);
+        intent.putExtra(PartyActivity.STATE_PLAYLIST, selectedPlaylist);
         startActivity(intent);
         if (instant)
             overridePendingTransition(0, 0); // TODO: Set slide left out and in transition?

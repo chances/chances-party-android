@@ -6,17 +6,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.view.View;
 import android.widget.LinearLayout;
 
 import com.chancesnow.party.spotify.SpotifyClient;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.MaterialCommunityModule;
-
-import java.util.Calendar;
-import java.util.Date;
 
 public class PartyApplication extends Application {
 
@@ -70,7 +65,7 @@ public class PartyApplication extends Application {
 
         stateEditor.putString(SpotifyClient.STATE_TOKEN, SpotifyClient.TOKEN_EXPIRED);
         stateEditor.putBoolean(PlaylistsActivity.STATE_PLAYLIST_LOADED, false);
-        stateEditor.putString(QueueActivity.STATE_PLAYLIST, null);
+        stateEditor.putString(PartyActivity.STATE_PLAYLIST, null);
         stateEditor.putString(PlaylistsFragment.STATE_PLAYLISTS, null);
 
         stateEditor.apply();

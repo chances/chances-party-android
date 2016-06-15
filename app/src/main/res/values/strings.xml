@@ -11,6 +11,8 @@
     <string name="refresh">Refresh</string>
 
     <string name="join_party">Join a Party</string>
+    <string name="your_party">Your Party</string>
+    <string name="party_playlist">Shuffling %1$s</string>
 
     <string name="now_playing">Now Playing</string>
 
@@ -21,6 +23,5 @@
     <string name="queue">Queue</string>
     <string name="add_to_queue">Add to Queue</string>
     <string name="add_to_queue_hint">Add a song to the queue</string>
-    <string name="queue_playlist">Shuffled with %1$s</string>
     <string name="shuffle_play">Shuffle Play</string>
 </resources>

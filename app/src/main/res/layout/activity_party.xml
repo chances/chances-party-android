@@ -14,8 +14,8 @@
         android:id="@+id/queue.toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="com.chancesnow.party.QueueToolbarFragment"
-        tools:layout="@layout/fragment_queue_toolbar" />
+        android:name="com.chancesnow.party.PartyToolbarFragment"
+        tools:layout="@layout/fragment_party_toolbar" />
 
     <LinearLayout
         android:id="@+id/queue.loading"

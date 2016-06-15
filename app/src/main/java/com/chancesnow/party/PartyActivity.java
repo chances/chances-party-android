@@ -17,8 +17,8 @@ import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.Track;
 
-public class QueueActivity extends AppCompatActivity
-        implements QueueToolbarFragment.OnQueueToolbarStateChangeListener,
+public class PartyActivity extends AppCompatActivity
+        implements PartyToolbarFragment.OnQueueToolbarStateChangeListener,
         QueueFragment.OnQueueFragmentListener,
         PlayerFragment.OnPlayerInteractionListener {
 
@@ -30,7 +30,7 @@ public class QueueActivity extends AppCompatActivity
     private Playlist mPlaylist;
 
     private View mQueueActivity;
-    private QueueToolbarFragment mQueueToolbarFragment;
+    private PartyToolbarFragment mPartyToolbarFragment;
 
     private View mLoadingView;
     private QueueFragment mQueueFragment;
@@ -42,7 +42,7 @@ public class QueueActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_queue);
+        setContentView(R.layout.activity_party);
 
         mGson = new Gson();
 
@@ -84,7 +84,7 @@ public class QueueActivity extends AppCompatActivity
         if (mPlaylistIntent != null) {
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null)
-                actionBar.setSubtitle(getString(R.string.queue_playlist, mPlaylistIntent.name));
+                actionBar.setSubtitle(getString(R.string.party_playlist, mPlaylistIntent.name));
 
             mLoadingView.setVisibility(View.GONE);
             getFragmentManager().beginTransaction().show(mQueueFragment).commit();
@@ -114,8 +114,8 @@ public class QueueActivity extends AppCompatActivity
     }
 
     @Override
-    public void onQueueToolbarAttached(QueueToolbarFragment fragment) {
-        mQueueToolbarFragment = fragment;
+    public void onQueueToolbarAttached(PartyToolbarFragment fragment) {
+        mPartyToolbarFragment = fragment;
     }
 
     @Override
@@ -177,7 +177,7 @@ public class QueueActivity extends AppCompatActivity
                 case Intent.ACTION_SEARCH:
                     String query = intent.getStringExtra(SearchManager.QUERY);
 
-                    mQueueToolbarFragment.enterSearchState(query, false, false);
+                    mPartyToolbarFragment.enterSearchState(query, false, false);
 
                     break;
                 case PlaylistsActivity.ACTION_LOAD_PLAYLIST:
