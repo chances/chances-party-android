@@ -35,12 +35,14 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     private Drawable mIconPlaceholder;
     private List<Integer> mUnloadedIcons;
     private int mSelectedIndex;
+    private int mPlayingIndex;
 
     public PlaylistAdapter(List<PlaylistSimple> items, PlaylistsFragmentListener listener) {
         mValues = items;
         mListener = listener;
         mUnloadedIcons = new ArrayList<>();
         mSelectedIndex = -1;
+        mPlayingIndex = -1;
     }
 
     @Override
@@ -122,6 +124,18 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         int oldIndex = mSelectedIndex;
 
         mSelectedIndex = position;
+
+        if (oldIndex >= 0)
+            notifyItemChanged(oldIndex);
+
+        if (position >= 0)
+            notifyItemChanged(position);
+    }
+
+    public void setPlayingIndex(int position) {
+        int oldIndex = mPlayingIndex;
+
+        mPlayingIndex = position;
 
         if (oldIndex >= 0)
             notifyItemChanged(oldIndex);
