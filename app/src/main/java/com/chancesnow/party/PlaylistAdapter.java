@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chancesnow.party.PlaylistsFragment.OnPlaylistListListener;
+import com.chancesnow.party.spotify.SpotifyClient;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.MaterialCommunityIcons;
 import com.squareup.picasso.Picasso;
@@ -73,10 +74,10 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
                 ));
 
         // Download the icon, if available
-        String iconUrl = getLargestIcon(mValues.get(position).images, 500);
+        String iconUrl = SpotifyClient.getLargestImage(mValues.get(position).images, 500);
         // If there is no icon under 500 square pixels, get the largest icon
         if (iconUrl == null)
-            iconUrl = getLargestIcon(mValues.get(position).images, Integer.MAX_VALUE);
+            iconUrl = SpotifyClient.getLargestImage(mValues.get(position).images, Integer.MAX_VALUE);
         // Set the ViewHolder's icon
         if (iconUrl != null) {
             RequestCreator picassoIcon = Picasso
@@ -155,30 +156,6 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
 
             mUnloadedIcons.clear();
         }
-    }
-
-    private String getLargestIcon(List<Image> images, int max) {
-        int width = 0, height = 0;
-        String url = null;
-
-        if (images.size() > 0) {
-            for (Image image: images) {
-                if (image != null && image.width != null && image.height != null &&
-                        image.width <= max && image.height <= max &&
-                        (Math.max(width, image.width) == image.width ||
-                        Math.max(height, image.height) == image.height)) {
-                    width = image.width;
-                    height = image.height;
-                    url = image.url;
-                } else if (image != null && max == Integer.MAX_VALUE) {
-                    url = image.url;
-
-                    break;
-                }
-            }
-        }
-
-        return url;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

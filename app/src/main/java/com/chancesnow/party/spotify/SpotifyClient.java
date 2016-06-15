@@ -8,12 +8,14 @@ import com.chancesnow.party.PartyApplication;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyCallback;
 import kaaes.spotify.webapi.android.SpotifyError;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.UserPrivate;
@@ -52,6 +54,30 @@ public class SpotifyClient {
         api.setAccessToken(accessToken);
 
         spotify = api.getService();
+    }
+
+    public static String getLargestImage(List<Image> images, int max) {
+        int width = 0, height = 0;
+        String url = null;
+
+        if (images.size() > 0) {
+            for (Image image: images) {
+                if (image != null && image.width != null && image.height != null &&
+                        image.width <= max && image.height <= max &&
+                        (Math.max(width, image.width) == image.width ||
+                                Math.max(height, image.height) == image.height)) {
+                    width = image.width;
+                    height = image.height;
+                    url = image.url;
+                } else if (image != null && max == Integer.MAX_VALUE) {
+                    url = image.url;
+
+                    break;
+                }
+            }
+        }
+
+        return url;
     }
 
     public String getToken() {
