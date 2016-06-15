@@ -82,9 +82,8 @@ public class PartyActivity extends AppCompatActivity
         super.onResume();
 
         if (mPlaylistIntent != null) {
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null)
-                actionBar.setSubtitle(getString(R.string.party_playlist, mPlaylistIntent.name));
+            // TODO: Update a label in the Now Playing page instead
+            // R.string.party_playlist, mPlaylistIntent.name
 
             mLoadingView.setVisibility(View.GONE);
             getFragmentManager().beginTransaction().show(mQueueFragment).commit();
