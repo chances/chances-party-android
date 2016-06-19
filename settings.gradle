@@ -1,1 +1,1 @@
-include ':app', ':spotify-auth', ':spotify-player'
+include ':app'

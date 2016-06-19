@@ -4,8 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Party.iml" filepath="$PROJECT_DIR$/Party.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/spotify-auth/spotify-auth.iml" filepath="$PROJECT_DIR$/spotify-auth/spotify-auth.iml" />
-      <module fileurl="file://$PROJECT_DIR$/spotify-player/spotify-player.iml" filepath="$PROJECT_DIR$/spotify-player/spotify-player.iml" />
     </modules>
   </component>
 </project>
