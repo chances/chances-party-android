@@ -20,18 +20,18 @@
         </activity>
         <activity
             android:name=".PlaylistsActivity"
-            android:label="@string/select_playlist"
+            android:label="@string/your_playlists"
+            android:parentActivityName=".PartyActivity"
             android:launchMode="singleTask"
-            android:alwaysRetainTaskState="true" />
+            android:alwaysRetainTaskState="true" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.chancesnow.party.PartyActivity" />
+        </activity>
         <activity
             android:name=".PartyActivity"
             android:label="@string/your_party"
-            android:parentActivityName=".PlaylistsActivity"
-            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.chancesnow.party.PlaylistsActivity" />
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />

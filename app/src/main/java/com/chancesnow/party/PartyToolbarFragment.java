@@ -81,9 +81,6 @@ public class PartyToolbarFragment extends Fragment {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
 
         activity.setSupportActionBar(mToolbar);
-        ActionBar actionBar = activity.getSupportActionBar();
-        if (actionBar != null)
-            actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

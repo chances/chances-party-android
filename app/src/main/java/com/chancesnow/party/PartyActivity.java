@@ -4,7 +4,6 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -33,6 +32,8 @@ public class PartyActivity extends AppCompatActivity
     private PartyToolbarFragment mPartyToolbarFragment;
 
     private View mLoadingView;
+    private View mLandingView;
+    private View mContentView;
     private QueueFragment mQueueFragment;
     private Button mShuffleButton;
     private PlayerFragment mPlayerFragment;
@@ -52,6 +53,20 @@ public class PartyActivity extends AppCompatActivity
         if (mLoadingView != null)
             mLoadingView.setVisibility(View.GONE);
 
+        mLandingView = findViewById(R.id.queue_landing);
+        Button selectPlaylist = (Button) findViewById(R.id.party_selectPlaylist);
+        if (selectPlaylist != null) {
+            selectPlaylist.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    selectPlaylist();
+                }
+            });
+        }
+
+        mContentView = findViewById(R.id.party_content);
+
+        // TODO: Move this to the player fragment
         mShuffleButton = (Button) findViewById(R.id.player_shuffle);
         if (mShuffleButton != null)
             mShuffleButton.setCompoundDrawablesRelative(
@@ -86,8 +101,32 @@ public class PartyActivity extends AppCompatActivity
             // R.string.party_playlist, mPlaylistIntent.name
 
             mLoadingView.setVisibility(View.GONE);
-            getFragmentManager().beginTransaction().show(mQueueFragment).commit();
-            getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
+            mLandingView.setVisibility(View.GONE);
+            mContentView.setVisibility(View.VISIBLE);
+//            getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
+        } else {
+            mLoadingView.setVisibility(View.GONE);
+            mLandingView.setVisibility(View.VISIBLE);
+            mContentView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PartyApplication.PICK_PLAYLIST_REQUEST) {
+            if (resultCode == RESULT_OK && data != null) {
+                PlaylistSimple playlist = data.getParcelableExtra(STATE_PLAYLIST);
+                if (playlist != null) {
+                    restoredFromState = false;
+
+                    mPlaylistIntent = playlist;
+
+                    mLandingView.setVisibility(View.GONE);
+                    getFragmentManager().beginTransaction().hide(mQueueFragment).commit();
+
+                    // TODO: Do shit with the playlist
+                }
+            }
         }
     }
 
@@ -152,12 +191,20 @@ public class PartyActivity extends AppCompatActivity
         SharedPreferences state = getSharedPreferences(PartyApplication.PREFS_GENERAL, 0);
         String playlistJson = state.getString(STATE_PLAYLIST, null);
 
-        if (playlistJson != null) {
+        if (playlistJson != null && !playlistJson.equals("null")) {
             PlaylistSimple playlist = mGson.fromJson(playlistJson, PlaylistSimple.class);
             restoredFromState = playlist != null;
 
             mPlaylistIntent = restoredFromState ? playlist : null;
-        }
+        } else
+            selectPlaylist();
+    }
+
+    private void selectPlaylist() {
+        Intent pickPlaylistIntent = new Intent(this, PlaylistsActivity.class);
+        pickPlaylistIntent.setAction(Intent.ACTION_PICK);
+        pickPlaylistIntent.putExtra(PlaylistsActivity.STATE_FIRST_TIME, true);
+        startActivityForResult(pickPlaylistIntent, PartyApplication.PICK_PLAYLIST_REQUEST);
     }
 
     private void savePlaylist() {
@@ -177,20 +224,6 @@ public class PartyActivity extends AppCompatActivity
                     String query = intent.getStringExtra(SearchManager.QUERY);
 
                     mPartyToolbarFragment.enterSearchState(query, false, false);
-
-                    break;
-                case PlaylistsActivity.ACTION_LOAD_PLAYLIST:
-                    Bundle extras = intent.getExtras();
-                    if (extras != null) {
-                        PlaylistSimple playlist =
-                                extras.getParcelable(STATE_PLAYLIST);
-                        if (playlist != null) {
-
-                            restoredFromState = false;
-
-                            mPlaylistIntent = playlist;
-                        }
-                    }
 
                     break;
             }

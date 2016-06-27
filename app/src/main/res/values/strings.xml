@@ -16,7 +16,7 @@
 
     <string name="now_playing">Now Playing</string>
 
-    <string name="select_playlist">Your Playlists</string>
+    <string name="your_playlists">Your Playlists</string>
     <string name="playlist_icon">Playlist Icon</string>
     <string name="track_count">%1$s songs</string>
     <string name="track_count_singular">%1$s song</string>
@@ -24,5 +24,6 @@
     <string name="queue">Queue</string>
     <string name="add_to_queue">Add to Queue</string>
     <string name="add_to_queue_hint">Add a song to the queue</string>
+    <string name="select_playlist">Select Playlist</string>
     <string name="shuffle_play">Shuffle Play</string>
 </resources>

@@ -1,9 +1,10 @@
 package com.chancesnow.party;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.chancesnow.party.spotify.SpotifyClient;
-import com.google.gson.Gson;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.MaterialCommunityIcons;
 
@@ -22,10 +22,12 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
 public class PlaylistsActivity extends AppCompatActivity
         implements PlaylistsFragment.OnPlaylistListListener {
 
-    public static final String ACTION_LOAD_PLAYLIST = "queueLoadPlaylist";
-    public static final String STATE_PLAYLIST_LOADED = "playlistLoaded";
+    public static final String STATE_FIRST_TIME = "selectionFirstTime";
+    public static final String STATE_PLAYLISTS_LOADED = "playlistLoaded";
+    public static final String STATE_SELECTED_PLAYLIST = "selectedPlaylist";
 
-    private boolean mPlaylistLoaded;
+    private boolean mSelectionFirstTime;
+    private boolean mPlaylistsLoaded;
     private SpotifyClient mSpotify;
 
     private View mPlaylistsActivity;
@@ -44,38 +46,36 @@ public class PlaylistsActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_playlists);
 
-        mPlaylistLoaded = false;
+        mSelectionFirstTime = false;
+        mPlaylistsLoaded = false;
         mSpotify = ((PartyApplication) getApplication()).getSpotifyClient();
 
         mPlaylistsActivity = findViewById(R.id.playlists);
 
         mToolbar = (Toolbar) findViewById(R.id.playlists_toolbar);
         setSupportActionBar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
         mLoadingView = findViewById(R.id.playlists_loading);
         mLayoutView = findViewById(R.id.playlists_layout);
 
         getFragmentManager().beginTransaction().hide(mPlaylistsFragment).commit();
 
+        // TODO: Prevent the landscape orientation on phone-sized devices.
+
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            mSelectionFirstTime = getIntent().getExtras().getBoolean(STATE_FIRST_TIME, false);
+        }
+
+        if (mSelectionFirstTime) {
+            if (actionBar != null)
+                actionBar.setDisplayHomeAsUpEnabled(false);
+        }
+
         if (savedInstanceState != null) {
-            mPlaylistLoaded = savedInstanceState.getBoolean(STATE_PLAYLIST_LOADED, false);
-
-            if (mPlaylistLoaded) {
-                // Check for saved selected playlist, switching to queue if available
-                SharedPreferences state = getSharedPreferences(PartyApplication.PREFS_GENERAL, 0);
-                String playlistJson = state.getString(PartyActivity.STATE_PLAYLIST, null);
-                if (playlistJson != null) {
-                    Gson gson = new Gson();
-                    try {
-                        PlaylistSimple playlist = gson.fromJson(playlistJson, PlaylistSimple.class);
-                        if (playlist != null) {
-                            mPlaylistLoaded = true;
-
-                            navigateToQueue(playlist, true);
-                        }
-                    } catch (Exception ignored) {}
-                }
-            }
+            mPlaylistsLoaded = savedInstanceState.getBoolean(STATE_PLAYLISTS_LOADED, false);
         }
     }
 
@@ -91,7 +91,7 @@ public class PlaylistsActivity extends AppCompatActivity
                         .actionBarSize())
                 .setVisible(false);
 
-        if (mPlaylistLoaded)
+        if (mPlaylistsLoaded)
             mNowPlayingMenuItem.setVisible(true);
 
         return true;
@@ -118,29 +118,19 @@ public class PlaylistsActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (mPlaylistLoaded && mNowPlayingMenuItem != null)
-            mNowPlayingMenuItem.setVisible(true);
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putBoolean(STATE_PLAYLIST_LOADED, mPlaylistLoaded);
+        savedInstanceState.putBoolean(STATE_PLAYLISTS_LOADED, mPlaylistsLoaded);
 
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    private void navigateToQueue(PlaylistSimple selectedPlaylist, boolean instant) {
-        mPlaylistLoaded = true;
+    private void respondWithResult(PlaylistSimple selectedPlaylist) {
+        mPlaylistsLoaded = true;
 
-        Intent intent = new Intent(PlaylistsActivity.this, PartyActivity.class);
-        intent.setAction(ACTION_LOAD_PLAYLIST);
-        intent.putExtra(PartyActivity.STATE_PLAYLIST, selectedPlaylist);
-        startActivity(intent);
-        if (instant)
-            overridePendingTransition(0, 0); // TODO: Set slide left out and in transition?
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra(STATE_SELECTED_PLAYLIST, selectedPlaylist);
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
 
     @Override
@@ -183,6 +173,8 @@ public class PlaylistsActivity extends AppCompatActivity
         mLoadingView.setVisibility(View.GONE);
         mLayoutView.setVisibility(View.VISIBLE);
 
+        // TODO: Don't do this after onSaveInstanceState, crashes app...
+        // java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState
         getFragmentManager().beginTransaction().show(mPlaylistsFragment).commit();
     }
 
@@ -191,6 +183,6 @@ public class PlaylistsActivity extends AppCompatActivity
         mPlaylistsFragment.savePlaylists();
 
         // Navigate to queue
-        navigateToQueue(item, false);
+        respondWithResult(item);
     }
 }

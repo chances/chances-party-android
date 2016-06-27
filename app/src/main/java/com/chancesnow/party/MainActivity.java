@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         // Restore persisted state if available
         if (mSpotify.loadToken()) {
             setLoginState(true);
-            gotoPlaylists();
+            gotoParty();
         }
     }
 
@@ -76,7 +76,12 @@ public class MainActivity extends AppCompatActivity {
 
                     mSpotify.saveToken();
 
-                    gotoPlaylists();
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            gotoParty();
+                        }
+                    }, 750);
 
                     break;
 
@@ -112,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
                 // Most likely auth flow was cancelled
                 default:
                     // TODO: Handle other cases?
+
+                    setLoginState(false);
             }
         }
     }
@@ -138,26 +145,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void gotoPlaylists() {
+    private void gotoParty() {
         mLoadingView.setVisibility(View.VISIBLE);
 
         // TODO: Start a session with the Party API
 
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!mSpotify.isTokenExpired()) {
-                    Intent intent = new Intent(MainActivity.this, PlaylistsActivity.class);
-                    intent.addFlags(
-                            Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK
-                    );
-                    startActivity(intent);
-                    overridePendingTransition(0, 0);
-                    finish();
-                } else
-                    expireTokenAndLogout();
-            }
-        }, 750);
+        if (!mSpotify.isTokenExpired()) {
+            Intent intent = new Intent(MainActivity.this, PartyActivity.class);
+            intent.addFlags(
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK
+            );
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+            finish();
+        } else
+            expireTokenAndLogout();
     }
 
     public void login(View view) {

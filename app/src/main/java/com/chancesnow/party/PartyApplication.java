@@ -16,6 +16,9 @@ import com.joanzapata.iconify.fonts.MaterialCommunityModule;
 public class PartyApplication extends Application {
 
     public static final String PREFS_GENERAL = "PartyPrefs";
+
+    public static final int PICK_PLAYLIST_REQUEST = 1;
+
     public static final LinearLayout.LayoutParams WRAP_CONTENT_LAYOUT = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     public static final LinearLayout.LayoutParams ZERO_LAYOUT = new LinearLayout.LayoutParams(0, 0, 0);
     public static final LinearLayout.LayoutParams FLEX_LAYOUT = new LinearLayout.LayoutParams(0, 0, 1);
@@ -63,12 +66,11 @@ public class PartyApplication extends Application {
         SharedPreferences state = getSharedPreferences(PREFS_GENERAL, 0);
         SharedPreferences.Editor stateEditor = state.edit();
 
-        stateEditor.putString(SpotifyClient.STATE_TOKEN, SpotifyClient.TOKEN_EXPIRED);
-        stateEditor.putBoolean(PlaylistsActivity.STATE_PLAYLIST_LOADED, false);
-        stateEditor.putString(PartyActivity.STATE_PLAYLIST, null);
-        stateEditor.putString(PlaylistsFragment.STATE_PLAYLISTS, null);
+        stateEditor.clear();
 
-        stateEditor.apply();
+        stateEditor.putString(SpotifyClient.STATE_TOKEN, SpotifyClient.TOKEN_EXPIRED);
+
+        stateEditor.commit();
     }
 
     public void openWebPage(String url) {

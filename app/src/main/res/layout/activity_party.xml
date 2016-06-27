@@ -28,21 +28,48 @@
         <include layout="@layout/loading" />
     </LinearLayout>
 
-    <fragment
-        android:id="@+id/queue.queue"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:name="com.chancesnow.party.QueueFragment"
-        tools:layout="@layout/fragment_queue" />
-
-    <fragment
-        android:id="@+id/queue.player"
+    <LinearLayout
+        android:id="@+id/queue.landing"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:name="com.chancesnow.party.PlayerFragment"
-        tools:layout="@layout/fragment_player" />
+        android:gravity="center" >
+
+        <Button
+            android:id="@+id/party.selectPlaylist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/button_padding"
+            android:paddingEnd="@dimen/button_padding"
+            android:layout_gravity="center"
+            android:text="@string/select_playlist"
+            android:background="@drawable/accent_button" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/party.content"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <fragment
+            android:id="@+id/queue.queue"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:name="com.chancesnow.party.QueueFragment"
+            tools:layout="@layout/fragment_queue" />
+
+        <fragment
+            android:id="@+id/queue.player"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:name="com.chancesnow.party.PlayerFragment"
+            tools:layout="@layout/fragment_player" />
+    </LinearLayout>
 
     <include layout="@layout/footer" />
 </LinearLayout>
