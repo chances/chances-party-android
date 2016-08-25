@@ -113,7 +113,7 @@ public class PartyActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PartyApplication.PICK_PLAYLIST_REQUEST) {
+        if (requestCode == App.PICK_PLAYLIST_REQUEST) {
             if (resultCode == RESULT_OK && data != null) {
                 PlaylistSimple playlist = data.getParcelableExtra(STATE_PLAYLIST);
                 if (playlist != null) {
@@ -187,7 +187,7 @@ public class PartyActivity extends AppCompatActivity
     }
 
     private void loadPlaylist() {
-        SharedPreferences state = getSharedPreferences(PartyApplication.PREFS_GENERAL, 0);
+        SharedPreferences state = getSharedPreferences(App.PREFS_GENERAL, 0);
         String playlistJson = state.getString(STATE_PLAYLIST, null);
 
         if (playlistJson != null && !playlistJson.equals("null")) {
@@ -203,11 +203,11 @@ public class PartyActivity extends AppCompatActivity
         Intent pickPlaylistIntent = new Intent(this, PlaylistsActivity.class);
         pickPlaylistIntent.setAction(Intent.ACTION_PICK);
         pickPlaylistIntent.putExtra(PlaylistsActivity.STATE_FIRST_TIME, true);
-        startActivityForResult(pickPlaylistIntent, PartyApplication.PICK_PLAYLIST_REQUEST);
+        startActivityForResult(pickPlaylistIntent, App.PICK_PLAYLIST_REQUEST);
     }
 
     private void savePlaylist() {
-        SharedPreferences state = getSharedPreferences(PartyApplication.PREFS_GENERAL, 0);
+        SharedPreferences state = getSharedPreferences(App.PREFS_GENERAL, 0);
         SharedPreferences.Editor stateEditor = state.edit();
 
         String playlistJson = mGson.toJson(mPlaylistIntent);

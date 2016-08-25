@@ -48,7 +48,7 @@ public class PlaylistsActivity extends AppCompatActivity
 
         mSelectionFirstTime = false;
         mPlaylistsLoaded = false;
-        mSpotify = ((PartyApplication) getApplication()).getSpotifyClient();
+        mSpotify = ((App) getApplication()).getSpotifyClient();
 
         mPlaylistsActivity = findViewById(R.id.playlists);
 
@@ -109,7 +109,7 @@ public class PlaylistsActivity extends AppCompatActivity
 
                 return true;
             case R.id.action_logout:
-                ((PartyApplication) getApplication()).confirmLogout(this);
+                ((App) getApplication()).confirmLogout(this);
 
                 return true;
         }
@@ -146,7 +146,7 @@ public class PlaylistsActivity extends AppCompatActivity
                 (message.contains("token expired")) || message.contains("invalid access token")) {
             getFragmentManager().beginTransaction().hide(mPlaylistsFragment).commit();
 
-            ((PartyApplication) getApplication()).logout(this);
+            ((App) getApplication()).logout(this);
 
             return;
         }
@@ -163,7 +163,7 @@ public class PlaylistsActivity extends AppCompatActivity
                     public void onDismissed(Snackbar snackbar, int event) {
                         super.onDismissed(snackbar, event);
 
-                        ((PartyApplication) getApplication()).logout(that);
+                        ((App) getApplication()).logout(that);
                     }
                 }).show();
     }

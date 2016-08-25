@@ -66,7 +66,7 @@ public class PlaylistsFragment extends Fragment
             mListener = (OnPlaylistListListener) context;
             mListener.onAttached(this);
 
-            mSpotify = ((PartyApplication) getActivity().getApplication()).getSpotifyClient();
+            mSpotify = ((App) getActivity().getApplication()).getSpotifyClient();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnPlaylistListListener");
@@ -127,7 +127,7 @@ public class PlaylistsFragment extends Fragment
 
         // Restore from persisted storage if available
         SharedPreferences state = getActivity()
-                .getSharedPreferences(PartyApplication.PREFS_GENERAL, 0);
+                .getSharedPreferences(App.PREFS_GENERAL, 0);
         String playlistsJson = state.getString(STATE_PLAYLISTS, null);
         if (playlistsJson != null) {
             try {
@@ -198,7 +198,7 @@ public class PlaylistsFragment extends Fragment
     public void savePlaylists() {
         // Persist the playlists
         SharedPreferences state = getActivity()
-                .getSharedPreferences(PartyApplication.PREFS_GENERAL, 0);
+                .getSharedPreferences(App.PREFS_GENERAL, 0);
         SharedPreferences.Editor stateEditor = state.edit();
 
         if (mPlaylists != null && mPlaylists.items.size() > 0) {

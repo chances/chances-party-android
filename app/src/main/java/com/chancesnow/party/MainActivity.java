@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        mSpotify = ((PartyApplication) getApplication()).getSpotifyClient();
+        mSpotify = ((App) getApplication()).getSpotifyClient();
 
         mTryingLogin = false;
 
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void expireTokenAndLogout() {
-        ((PartyApplication) getApplication()).dumpUserData();
+        ((App) getApplication()).dumpUserData();
 
         setLoginState(false);
     }

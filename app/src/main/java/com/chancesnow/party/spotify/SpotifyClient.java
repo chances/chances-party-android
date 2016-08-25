@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.ArrayMap;
 
-import com.chancesnow.party.PartyApplication;
+import com.chancesnow.party.App;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -138,7 +138,7 @@ public class SpotifyClient {
      * @return True if the token is valid and not expired, false otherwise
      */
     public boolean loadToken() {
-        SharedPreferences state = mContext.getSharedPreferences(PartyApplication.PREFS_GENERAL, 0);
+        SharedPreferences state = mContext.getSharedPreferences(App.PREFS_GENERAL, 0);
         String token = state.getString(STATE_TOKEN, null);
 
         return token != null &&
@@ -152,7 +152,7 @@ public class SpotifyClient {
      * Save the Spotify API token and expiration date to persistent storage.
      */
     public void saveToken() {
-        SharedPreferences state = mContext.getSharedPreferences(PartyApplication.PREFS_GENERAL, 0);
+        SharedPreferences state = mContext.getSharedPreferences(App.PREFS_GENERAL, 0);
         SharedPreferences.Editor stateEditor = state.edit();
 
         mDateCalendar.setTime(mSpotifyApiTokenExpires);

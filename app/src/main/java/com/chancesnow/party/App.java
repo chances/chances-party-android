@@ -13,7 +13,7 @@ import com.chancesnow.party.spotify.SpotifyClient;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.MaterialCommunityModule;
 
-public class PartyApplication extends Application {
+public class App extends Application {
 
     public static final String PREFS_GENERAL = "PartyPrefs";
 

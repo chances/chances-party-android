@@ -40,7 +40,7 @@ public class PlayerFragment extends Fragment {
             mListener = (OnPlayerInteractionListener) context;
             mListener.onPlayerAttached(this);
 
-            mSpotify = ((PartyApplication) getActivity().getApplication()).getSpotifyClient();
+            mSpotify = ((App) getActivity().getApplication()).getSpotifyClient();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnPlayerInteractionListener");
