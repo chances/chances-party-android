@@ -1,15 +1,17 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    buildToolsVersion '23.0.3'
 
     defaultConfig {
-        applicationId "com.chancesnow.party"
+        applicationId 'com.chancesnow.party'
         minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
     }
     buildTypes {
         release {
@@ -20,7 +22,7 @@ android {
 }
 
 repositories {
-    maven { url "https://jitpack.io" }
+    maven { url 'https://jitpack.io' }
 
     flatDir {
         dirs 'libs'
@@ -30,19 +32,29 @@ repositories {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    // Spotify authentication and playback
     testCompile 'junit:junit:4.12'
-    compile 'com.spotify.sdk:spotify-auth:1.0.0-beta12@aar'
-    compile 'com.spotify.sdk:spotify-player:1.0.0-beta12@aar'
-    compile 'com.github.kaaes:spotify-web-api-android:0.4.1'
-    compile 'co.trikita:anvil-sdk19:0.4.0'
-    compile "com.github.trikita:jedux:master-SNAPSHOT"
-    compile 'com.google.code.gson:gson:2.6.2'
-    compile 'com.joanzapata.iconify:android-iconify-material-community:2.2.2'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'me.zhanghai.android.materialprogressbar:library:1.1.6'
+
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.android.support:recyclerview-v7:23.4.0'
+
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.joanzapata.iconify:android-iconify-material-community:2.2.2'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'me.zhanghai.android.materialprogressbar:library:1.1.6'
+
+    // Spotify authentication and playback
+    compile 'com.spotify.sdk:spotify-auth:1.0.0-beta12@aar'
+    compile 'com.spotify.sdk:spotify-player:1.0.0-beta12@aar'
+    compile 'com.github.kaaes:spotify-web-api-android:0.4.1'
+
+    // Immutable app architecture
+    apt 'org.immutables:value:2.2.12'
+    provided 'org.immutables:value:2.2.12'
+    provided 'org.immutables:value:2.2.12:annotations'
+    provided 'org.immutables:builder:2.2.12'
+    provided 'org.immutables:gson:2.2.12:annotations'
+    compile 'co.trikita:anvil-sdk19:0.4.0'
+    compile 'com.github.trikita:jedux:master-SNAPSHOT'
 }
