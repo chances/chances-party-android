@@ -9,9 +9,14 @@ import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.widget.LinearLayout;
 
+import com.chancesnow.party.middleware.PersistenceController;
 import com.chancesnow.party.spotify.SpotifyClient;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.MaterialCommunityModule;
+
+import trikita.jedux.Action;
+import trikita.jedux.Logger;
+import trikita.jedux.Store;
 
 public class App extends Application {
 
@@ -23,11 +28,26 @@ public class App extends Application {
     public static final LinearLayout.LayoutParams ZERO_LAYOUT = new LinearLayout.LayoutParams(0, 0, 0);
     public static final LinearLayout.LayoutParams FLEX_LAYOUT = new LinearLayout.LayoutParams(0, 0, 1);
 
+    private static App instance;
+
+    private Store<Action<AppAction, ?>, State> store;
+
     private SpotifyClient mSpotify;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        App.instance = this;
+
+        PersistenceController persistenceController = new PersistenceController(this);
+        State initialState = persistenceController.getSavedState();
+        if (initialState == null) {
+            initialState = State.Default.build();
+        }
+
+        this.store = new Store<>(new State.Reducer(), initialState,
+                new Logger<>("Party"),
+                persistenceController);
 
         Iconify.with(new MaterialCommunityModule());
 
@@ -36,6 +56,14 @@ public class App extends Application {
 
     public SpotifyClient getSpotifyClient() {
         return mSpotify;
+    }
+
+    public static State getState() {
+        return instance.store.getState();
+    }
+
+    public static State dispatch(Action<AppAction, ?> action) {
+        return instance.store.dispatch(action);
     }
 
     public void confirmLogout(final Activity activityContext) {
