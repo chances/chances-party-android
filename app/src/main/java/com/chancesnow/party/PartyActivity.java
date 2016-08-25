@@ -160,14 +160,13 @@ public class PartyActivity extends AppCompatActivity
     public void onSearchStateChange(boolean searching) {
         if (searching) {
             mLoadingView.setVisibility(View.GONE);
-            getFragmentManager().beginTransaction().hide(mQueueFragment).commit();
-            getFragmentManager().beginTransaction().hide(mPlayerFragment).commit();
+            mLandingView.setVisibility(View.GONE);
+            mContentView.setVisibility(View.GONE);
             mFooterView.setVisibility(View.GONE);
         } else {
             // TODO: Handle other queue states
             mLoadingView.setVisibility(View.GONE);
-            getFragmentManager().beginTransaction().show(mQueueFragment).commit();
-            getFragmentManager().beginTransaction().show(mPlayerFragment).commit();
+            mContentView.setVisibility(View.VISIBLE);
             mFooterView.setVisibility(View.VISIBLE);
         }
     }
