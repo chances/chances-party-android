@@ -29,6 +29,7 @@ public abstract class State {
                 case LOGIN:
                     return copyOf(state)
                             .withAttemptingLogin(true);
+
                 case UPDATE_TOKEN:
                     SpotifyState.UpdateToken value = (SpotifyState.UpdateToken) action.value;
 
@@ -38,6 +39,7 @@ public abstract class State {
                                     .withApiToken(value.getToken())
                                     .withApiTokenExpirationTimestamp(value.getExpires())
                             );
+
                 case LOGOUT:
                     return copyOf(state)
                             .withSpotifyState(SpotifyState.initial());
