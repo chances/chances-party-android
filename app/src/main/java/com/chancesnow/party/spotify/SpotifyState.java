@@ -39,21 +39,4 @@ public abstract class SpotifyState {
                 expires.before(now) || expires.equals(now);
     }
 
-    public class UpdateToken {
-        String token;
-        long expires;
-
-        public UpdateToken(String token, long expires) {
-            this.token = token;
-            this.expires = expires;
-        }
-
-        public String getToken() {
-            return token;
-        }
-
-        public long getExpires() {
-            return expires;
-        }
-    }
 }
