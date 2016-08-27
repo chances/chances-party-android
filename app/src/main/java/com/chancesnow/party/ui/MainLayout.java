@@ -43,7 +43,7 @@ public class MainLayout extends RenderableView {
                     centerInParent();
                     backgroundResource(R.drawable.accent_button);
                     text(R.string.login);
-                    visibility(!App.getState().loggedIn() || !App.getState().attemptingLogin());
+                    visibility(!App.getState().loggedIn() && !App.getState().attemptingLogin());
                     onClick(v -> App.dispatch(new Action<>(AppAction.LOGIN)));
                 });
 
