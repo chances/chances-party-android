@@ -5,10 +5,10 @@ import android.app.Application;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
-import android.widget.LinearLayout;
 
 import com.chancesnow.party.middleware.PersistenceController;
 import com.chancesnow.party.spotify.SpotifyClient;
+import com.chancesnow.party.ui.MainActivity;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.MaterialCommunityModule;
 

@@ -1,4 +1,4 @@
-package com.chancesnow.party;
+package com.chancesnow.party.ui;
 
 import android.content.Intent;
 import android.os.Handler;
@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.chancesnow.party.App;
+import com.chancesnow.party.AppAction;
+import com.chancesnow.party.PartyActivity;
 import com.chancesnow.party.spotify.SpotifyClient;
 import com.chancesnow.party.spotify.UpdateToken;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
