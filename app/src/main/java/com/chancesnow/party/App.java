@@ -2,7 +2,6 @@ package com.chancesnow.party;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -71,20 +70,15 @@ public class App extends Application {
         new AlertDialog.Builder(activityContext)
             .setTitle("Logout")
             .setMessage("Are you sure you want to logout?")
-            .setPositiveButton(getString(R.string.logout), new DialogInterface.OnClickListener()
-            {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    logout(activityContext);
-                }
-
+            .setPositiveButton(getString(R.string.logout), (dialog, which) -> {
+                logout(activityContext);
             })
             .setNegativeButton("Cancel", null)
             .show();
     }
 
     public void logout(Activity activityContext) {
-        dumpUserData();
+        App.dispatch(new Action<>(AppAction.LOGOUT));
 
         activityContext.startActivity(new Intent(activityContext, MainActivity.class));
     }
