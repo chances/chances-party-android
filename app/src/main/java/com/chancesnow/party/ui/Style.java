@@ -121,7 +121,6 @@ public class Style {
                     size(WRAP, WRAP);
                     paddingStartEnd(0, textMargin);
                     layoutGravity(CENTER_VERTICAL);
-                    // TODO: Font size
                     text(R.string.poweredBy);
                 });
 
