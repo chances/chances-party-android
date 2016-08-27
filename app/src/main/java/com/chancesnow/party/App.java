@@ -3,7 +3,6 @@ package com.chancesnow.party;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.widget.LinearLayout;
@@ -22,10 +21,6 @@ public class App extends Application {
     public static final String PREFS_GENERAL = "PartyPrefs";
 
     public static final int PICK_PLAYLIST_REQUEST = 1;
-
-    public static final LinearLayout.LayoutParams WRAP_CONTENT_LAYOUT = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    public static final LinearLayout.LayoutParams ZERO_LAYOUT = new LinearLayout.LayoutParams(0, 0, 0);
-    public static final LinearLayout.LayoutParams FLEX_LAYOUT = new LinearLayout.LayoutParams(0, 0, 1);
 
     private static App instance;
 
@@ -81,19 +76,6 @@ public class App extends Application {
         App.dispatch(new Action<>(AppAction.LOGOUT));
 
         activityContext.startActivity(new Intent(activityContext, MainActivity.class));
-    }
-
-    public void dumpUserData() {
-        mSpotify.expireToken();
-
-        SharedPreferences state = getSharedPreferences(PREFS_GENERAL, 0);
-        SharedPreferences.Editor stateEditor = state.edit();
-
-        stateEditor.clear();
-
-        stateEditor.putString(SpotifyClient.STATE_TOKEN, SpotifyClient.TOKEN_EXPIRED);
-
-        stateEditor.commit();
     }
 
     public void openWebPage(String url) {
