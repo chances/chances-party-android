@@ -44,7 +44,7 @@ public class MainLayout extends RenderableView {
                     backgroundResource(R.drawable.accent_button);
                     text(R.string.login);
                     visibility(!App.getState().loggedIn() && !App.getState().attemptingLogin());
-                    onClick(v -> App.dispatch(new Action<>(AppAction.LOGIN)));
+                    onClick(v -> App.dispatch(new Action<>(AppAction.LOGIN, v.getContext())));
                 });
 
                 linearLayout(() -> {
