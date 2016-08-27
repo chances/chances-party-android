@@ -45,13 +45,14 @@ public class App extends Application {
             initialState = State.Default.build();
         }
 
+        mSpotify = SpotifyClient.getInstance();
+
         this.store = new Store<>(new State.Reducer(), initialState,
                 new Logger<>("Party"),
-                persistenceController);
+                persistenceController,
+                mSpotify);
 
         Iconify.with(new MaterialCommunityModule());
-
-        mSpotify = SpotifyClient.getInstance(getApplicationContext());
     }
 
     public SpotifyClient getSpotifyClient() {

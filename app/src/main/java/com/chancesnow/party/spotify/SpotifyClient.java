@@ -1,13 +1,15 @@
 package com.chancesnow.party.spotify;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.app.Activity;
 import android.util.ArrayMap;
 
 import com.chancesnow.party.App;
+import com.chancesnow.party.AppAction;
+import com.chancesnow.party.State;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -20,38 +22,29 @@ import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.UserPrivate;
 import retrofit.client.Response;
+import trikita.jedux.Action;
+import trikita.jedux.Store;
 
-public class SpotifyClient {
+public class SpotifyClient implements Store.Middleware<Action<AppAction, ?>, State> {
+    public static final int SPOTIFY_AUTH_REQUEST_CODE = 2977; // Tel keys: C-X-S-S
+    private static final String CLIENT_ID = "658e37b135ea40bcabd7b3c61c8070f6";
+    private static final String REDIRECT_URI = "chancesparty://callback";
     public static final String TOKEN_EXPIRED = "expired";
-    public static final String STATE_TOKEN = "spotifyApiToken";
-    public static final String STATE_TOKEN_EXPIRES = "spotifyApiTokenExpires";
 
     public static final int PAGE_SIZE = 20;
 
-    private static SpotifyClient ownInstance = new SpotifyClient(TOKEN_EXPIRED, 0);
-
-    private Context mContext;
-
-    private String mSpotifyApiToken;
-    private Calendar mDateCalendar;
-    private Date mSpotifyApiTokenExpires;
+    private static SpotifyClient ownInstance = new SpotifyClient();
 
     private SpotifyApi api;
     private SpotifyService spotify;
 
-    public static SpotifyClient getInstance(Context context) {
-        ownInstance.mContext = context;
-
+    public static SpotifyClient getInstance() {
         return ownInstance;
     }
 
-    private SpotifyClient(String accessToken, long expires) {
-        mDateCalendar = Calendar.getInstance();
-
-        updateToken(accessToken, expires);
-
+    private SpotifyClient() {
         api = new SpotifyApi();
-        api.setAccessToken(accessToken);
+        api.setAccessToken(TOKEN_EXPIRED);
 
         spotify = api.getService();
     }
@@ -80,91 +73,32 @@ public class SpotifyClient {
         return url;
     }
 
-    public String getToken() {
-        return mSpotifyApiToken;
-    }
+    @Override
+    public void dispatch(Store<Action<AppAction, ?>, State> store, Action<AppAction, ?> action,
+                         Store.NextDispatcher<Action<AppAction, ?>> next) {
+        next.dispatch(action);
 
-    public Date getTokenExpirationDate() {
-        return mSpotifyApiTokenExpires;
-    }
+        if (action.type == AppAction.LOGIN) {
+            Activity activity = (Activity) action.value;
 
-    public long getTokenExpirationDateTimestamp() {
-        mDateCalendar.setTime(mSpotifyApiTokenExpires);
+            AuthenticationRequest.Builder builder =
+                    new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 
-        return mDateCalendar.getTimeInMillis();
-    }
+            builder.setScopes(new String[]{
+                    "user-read-private",
+                    "playlist-read-private",
+                    "streaming"
+            });
+            AuthenticationRequest request = builder.build();
 
-    public boolean isTokenExpired() {
-        Date now = new Date();
+            AuthenticationClient.openLoginActivity(activity, SPOTIFY_AUTH_REQUEST_CODE, request);
+        } else if (action.type == AppAction.UPDATE_TOKEN) {
+            String token = App.getState().spotifyState().apiToken();
 
-        return mSpotifyApiToken.equalsIgnoreCase(TOKEN_EXPIRED) ||
-                mSpotifyApiTokenExpires.before(now) || mSpotifyApiTokenExpires.equals(now);
-    }
-
-    /**
-     * Update the Spotify API token and expiration time.
-     * @param token Spotify API token
-     * @param expires Expiration time, in milliseconds
-     * @return True if the token is valid and not expired, false otherwise
-     */
-    public boolean updateToken(String token, long expires) {
-        if (token != null) {
-            // If the token isn't expired, restore login state
-            if (!token.equalsIgnoreCase(TOKEN_EXPIRED)) {
-                mSpotifyApiToken = token;
-                mSpotifyApiTokenExpires = new Date(expires);
-
-                api.setAccessToken(mSpotifyApiToken);
-
-                return true;
-            } else {
-                mSpotifyApiToken = TOKEN_EXPIRED;
-                mSpotifyApiTokenExpires = new Date();
+            if (token != null && !token.equalsIgnoreCase(TOKEN_EXPIRED)) {
+                api.setAccessToken(token);
             }
         }
-
-        return false;
-    }
-
-    public void expireToken() {
-        mSpotifyApiToken = TOKEN_EXPIRED;
-        mSpotifyApiTokenExpires = new Date();
-
-        saveToken();
-    }
-
-    /**
-     * Load the Spotify API token and expiration date from persistent storage.
-     * @return True if the token is valid and not expired, false otherwise
-     */
-    public boolean loadToken() {
-        SharedPreferences state = mContext.getSharedPreferences(App.PREFS_GENERAL, 0);
-        String token = state.getString(STATE_TOKEN, null);
-
-        return token != null &&
-                updateToken(
-                        token,
-                        state.getLong(STATE_TOKEN_EXPIRES, mDateCalendar.getTimeInMillis())
-                );
-    }
-
-    /**
-     * Save the Spotify API token and expiration date to persistent storage.
-     */
-    public void saveToken() {
-        SharedPreferences state = mContext.getSharedPreferences(App.PREFS_GENERAL, 0);
-        SharedPreferences.Editor stateEditor = state.edit();
-
-        mDateCalendar.setTime(mSpotifyApiTokenExpires);
-        if (mSpotifyApiTokenExpires.after(new Date())) {
-            stateEditor.putString(STATE_TOKEN, mSpotifyApiToken);
-            stateEditor.putLong(STATE_TOKEN_EXPIRES, mDateCalendar.getTimeInMillis());
-        } else {
-            // Persist expired state
-            stateEditor.putString(STATE_TOKEN, TOKEN_EXPIRED);
-        }
-
-        stateEditor.apply();
     }
 
     public SpotifyService getSpotify() {
