@@ -1,6 +1,7 @@
 package com.chancesnow.party;
 
 import com.chancesnow.party.spotify.SpotifyState;
+import com.chancesnow.party.spotify.UpdateToken;
 
 import org.immutables.gson.Gson;
 import org.immutables.value.Value;
@@ -31,14 +32,16 @@ public abstract class State {
                             .withAttemptingLogin(true);
 
                 case UPDATE_TOKEN:
-                    SpotifyState.UpdateToken value = (SpotifyState.UpdateToken) action.value;
+                    UpdateToken value = (UpdateToken) action.value;
 
                     return copyOf(state)
                             .withSpotifyState(
                                     SpotifyState.copyOf(state.spotifyState())
                                     .withApiToken(value.getToken())
                                     .withApiTokenExpirationTimestamp(value.getExpires())
-                            );
+                            )
+                            .withLoggedIn(true)
+                            .withAttemptingLogin(false);
 
                 case LOGOUT:
                     return copyOf(state)
