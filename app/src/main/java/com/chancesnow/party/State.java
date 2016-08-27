@@ -44,8 +44,11 @@ public abstract class State {
                             .withAttemptingLogin(false);
 
                 case LOGOUT:
+                    // TODO: Dump other user data?
                     return copyOf(state)
-                            .withSpotifyState(SpotifyState.initial());
+                            .withSpotifyState(SpotifyState.initial())
+                            .withLoggedIn(false)
+                            .withAttemptingLogin(false);
             }
 
             return state;
