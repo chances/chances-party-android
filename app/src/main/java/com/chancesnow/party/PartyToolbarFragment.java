@@ -135,8 +135,10 @@ public class PartyToolbarFragment extends Fragment {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean(STATE_SEARCHING, mIsSearching);
 
-        mSearchQuery = mSearchView.getQuery().toString();
-        savedInstanceState.putString(STATE_SEARCH_QUERY, mSearchQuery);
+        if (mSearchView != null) {
+            mSearchQuery = mSearchView.getQuery().toString();
+            savedInstanceState.putString(STATE_SEARCH_QUERY, mSearchQuery);
+        }
 
         super.onSaveInstanceState(savedInstanceState);
     }
