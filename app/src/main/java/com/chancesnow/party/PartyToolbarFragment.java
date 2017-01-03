@@ -60,7 +60,7 @@ public class PartyToolbarFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        mToolbar = (Toolbar) view.findViewById(R.id.queue_toolbar);
+        mToolbar = (Toolbar) view.findViewById(R.id.party_toolbar);
 
         // Restore previous state if available
         if (savedInstanceState != null) {
