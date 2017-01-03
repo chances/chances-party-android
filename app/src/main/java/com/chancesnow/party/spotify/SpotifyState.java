@@ -9,7 +9,7 @@ import java.util.Date;
 @Gson.TypeAdapters
 public abstract class SpotifyState {
 
-    public static final String TOKEN_EXPIRED = "expired";
+    static final String TOKEN_EXPIRED = "expired";
 
     public abstract String apiToken();
     public abstract long apiTokenExpirationTimestamp();

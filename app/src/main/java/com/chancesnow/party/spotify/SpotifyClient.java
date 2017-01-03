@@ -26,11 +26,12 @@ import retrofit.client.Response;
 import com.chancesnow.jedux.Action;
 import com.chancesnow.jedux.Store;
 
+import static com.chancesnow.party.spotify.SpotifyState.TOKEN_EXPIRED;
+
 public class SpotifyClient implements Store.Middleware<Action<AppAction, ?>, State> {
     public static final int SPOTIFY_AUTH_REQUEST_CODE = 2977; // Tel keys: C-X-S-S
     private static final String CLIENT_ID = "658e37b135ea40bcabd7b3c61c8070f6";
     private static final String REDIRECT_URI = "chancesparty://callback";
-    public static final String TOKEN_EXPIRED = "expired";
 
     public static final int PAGE_SIZE = 20;
 
