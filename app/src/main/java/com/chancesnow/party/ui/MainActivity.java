@@ -19,7 +19,7 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.Date;
 
-import trikita.jedux.Action;
+import com.chancesnow.jedux.Action;
 
 public class MainActivity extends AppCompatActivity {
 

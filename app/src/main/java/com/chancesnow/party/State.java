@@ -6,8 +6,8 @@ import com.chancesnow.party.spotify.UpdateToken;
 import org.immutables.gson.Gson;
 import org.immutables.value.Value;
 
-import trikita.jedux.Action;
-import trikita.jedux.Store;
+import com.chancesnow.jedux.Action;
+import com.chancesnow.jedux.Store;
 
 @Value.Immutable
 @Value.Enclosing

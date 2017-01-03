@@ -12,9 +12,9 @@ import com.chancesnow.party.ui.MainActivity;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.MaterialCommunityModule;
 
-import trikita.jedux.Action;
-import trikita.jedux.Logger;
-import trikita.jedux.Store;
+import com.chancesnow.jedux.Action;
+import com.chancesnow.jedux.Logger;
+import com.chancesnow.jedux.Store;
 
 public class App extends Application {
 
@@ -65,9 +65,7 @@ public class App extends Application {
         new AlertDialog.Builder(activityContext)
             .setTitle("Logout")
             .setMessage("Are you sure you want to logout?")
-            .setPositiveButton(getString(R.string.logout), (dialog, which) -> {
-                logout(activityContext);
-            })
+            .setPositiveButton(getString(R.string.logout), (dialog, which) -> logout(activityContext))
             .setNegativeButton("Cancel", null)
             .show();
     }

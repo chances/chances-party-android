@@ -11,8 +11,8 @@ import com.chancesnow.party.GsonAdaptersState;
 import com.chancesnow.party.ImmutableState;
 import com.chancesnow.party.State;
 
-import trikita.jedux.Action;
-import trikita.jedux.Store;
+import com.chancesnow.jedux.Action;
+import com.chancesnow.jedux.Store;
 
 public class PersistenceController implements Store.Middleware<Action<AppAction, ?>, State> {
 

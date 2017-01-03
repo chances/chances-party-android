@@ -60,5 +60,5 @@ dependencies {
     provided 'org.immutables:builder:2.2.12'
     provided 'org.immutables:gson:2.2.12:annotations'
     compile 'co.trikita:anvil-sdk19:0.4.0'
-    compile 'com.github.trikita:jedux:master-SNAPSHOT'
+    compile project(path: ':jedux')
 }

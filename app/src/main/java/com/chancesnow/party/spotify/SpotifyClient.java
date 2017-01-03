@@ -22,8 +22,9 @@ import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.UserPrivate;
 import retrofit.client.Response;
-import trikita.jedux.Action;
-import trikita.jedux.Store;
+
+import com.chancesnow.jedux.Action;
+import com.chancesnow.jedux.Store;
 
 public class SpotifyClient implements Store.Middleware<Action<AppAction, ?>, State> {
     public static final int SPOTIFY_AUTH_REQUEST_CODE = 2977; // Tel keys: C-X-S-S

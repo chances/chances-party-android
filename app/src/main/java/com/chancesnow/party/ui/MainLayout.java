@@ -4,7 +4,7 @@ import android.content.Context;
 import android.widget.LinearLayout;
 
 import trikita.anvil.RenderableView;
-import trikita.jedux.Action;
+import com.chancesnow.jedux.Action;
 
 import static trikita.anvil.DSL.*;
 
