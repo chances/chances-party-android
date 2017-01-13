@@ -29,12 +29,25 @@ public class MainLayout extends RenderableView {
                 padding(0, 0, 0, Style.activityMargin);
                 backgroundResource(R.drawable.main_gradient);
 
-                textView(() -> {
+                linearLayout(() -> {
+                    orientation(LinearLayout.HORIZONTAL);
                     size(MATCH, WRAP);
                     padding(0, Style.textMargin, 0, 0);
-                    gravity(CENTER_HORIZONTAL);
-                    Style.fontSize(Style.headlineFontSize);
-                    text(R.string.app_name);
+
+                    space(() -> {
+                        size(0, 0);
+                        weight(1);
+                    });
+
+                    imageView(() -> {
+                        size(dip(300), WRAP);
+                        imageResource(R.drawable.party_logo);
+                    });
+
+                    space(() -> {
+                        size(0, 0);
+                        weight(1);
+                    });
                 });
 
                 button(() -> {
